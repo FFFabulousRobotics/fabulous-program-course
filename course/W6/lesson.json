@@ -1,0 +1,285 @@
+{
+  "title": "封装、继承与重写",
+  "subtitle": "封装校验、构造链、重写与重载，以及面向对象双向匹配",
+  "estimate": "学案40分钟",
+  "content": "课时 40分钟    对象 编程组全体成员    运行环境 Java 21\n\n本课从Arm的字段保护开始，学习如何通过方法控制对象状态，再用继承扩展功能。学完后应能识别构造调用、重写与重载，并读懂父类引用调用子类方法的执行过程。\n\n## 一 封装让字段通过方法读写\n\n字段公开时，外部代码可以直接赋入999这样的非法位置值。将字段设为private，再按实际需要开放public方法，可以在方法入口校验。并非每个字段都必须提供setter。\n\n下面所有位置参数均为有限数值，合法范围是0.0到1.0，包含端点。每组示例单独运行，文件名为Main.java。\n\n```java\nclass Arm {\n    private String who;\n    private double grabPosition = 0.0;\n    public Arm(String who) { this.who = who; }\n    public void setGrabPosition(double pos) {\n        if (pos < 0 || pos > 1) return;\n        grabPosition = pos;\n    }\n    public double getGrabPosition() { return grabPosition; }\n    public void show() {\n        System.out.println(who + \" \" + grabPosition);\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Arm a = new Arm(\"社员甲\");\n        a.setGrabPosition(0.92);\n        a.setGrabPosition(999);\n        System.out.println(a.getGrabPosition());\n    }\n}\n```\n\n输出为0.92。999被setter拒绝，之前的合法值保留。getter负责返回当前值，不修改状态。\n\n若在main中直接写a.grabPosition = 999;，会编译报错。private不是“不可修改”，而是限制其他类直接访问；Arm自己的方法仍能读写字段。\n\n## 二 继承扩展父类功能\n\nextends指定父类。Java中的一个类只能直接继承一个父类。子类可以继承符合访问规则的成员，并新增自己的字段与方法；构造方法不会被继承。\n\n沿用上一节的Arm类，保留Arm并用下面的ServoArm和Main替换原Main。\n\n```java\nclass ServoArm extends Arm {\n    private double swingLimit = 0.8;\n    public ServoArm(String who) { super(who); }\n    public void swing() {\n        System.out.println(\"摆动限位 \" + swingLimit);\n    }\n    @Override\n    public void show() {\n        super.show();\n        System.out.println(\"[Servo] \" + getGrabPosition());\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        ServoArm sa = new ServoArm(\"社员乙\");\n        sa.setGrabPosition(0.9);\n        Arm ref = sa;\n        ref.show();\n        sa.swing();\n    }\n}\n```\n\n### 输出\n\n```java\n社员乙 0.9\n[Servo] 0.9\n摆动限位 0.8\n```\n\nsetGrabPosition和getGrabPosition是继承来的public方法。父类的private字段不被子类继承，子类不能直接用字段名访问它；相关状态仍由父类代码管理，通过访问方法读写。\n\n### super的两种用法\n\nsuper(who)调用父类构造。Java 21中，显式this(...)或super(...)必须位于构造方法体的首条语句，同一构造方法体不能同时直接调用两者。若使用this(...)转交，最终仍须通过构造链完成父类初始化。\n\n如果第一条语句没有this(...)或super(...)，会隐式调用super()。父类没有可访问的无参构造时，不能指望编译器自动补上带参数的调用。super.show()则用于调用父类中的方法实现。\n\n## 三 区分重写与重载\n\n上一节的ServoArm.show()重写了Arm.show()。ref的声明类型是Arm，实际对象是ServoArm，所以ref.show()执行子类版本；子类版本再通过super.show()调用父类实现。\n\n- **位置**：重写 Override：父类与子类的继承关系中；重载 Overload：同一类中，或在继承关系中\n- **方法名**：重写 Override：相同；重载 Overload：相同\n- **参数列表**：重写 Override：相同；重载 Overload：不同\n- **返回类型**：重写 Override：须符合重写规则，本课保持相同；重载 Overload：可以不同，但不能只改返回类型\n- **访问权限**：重写 Override：不能比父类更严格；重载 Overload：可以不同\n- **注解**：重写 Override：建议写@Override，帮助检查；重载 Overload：不因重载而使用@Override\n\n### 重载通过参数列表区分\n\n```java\nclass Calculator {\n    public int add(int a, int b) { return a + b; }\n    public double add(double a, double b) { return a + b; }\n    public int add(int a, int b, int c) { return a + b + c; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Calculator c = new Calculator();\n        System.out.println(c.add(1, 2));\n        System.out.println(c.add(1.0, 2.0));\n        System.out.println(c.add(1, 2, 3));\n    }\n}\n```\n\n三行输出依次为3、3.0、6。参数个数、类型或类型顺序不同可以区分重载；把int add(int,int)只改成double add(int,int)，会产生编译错误。\n\n### @Override与调用顺序\n\n注解帮助编译器检查是否真的重写。拼成showx()或改了参数列表后保留@Override，会被报错；去掉注解可能只是新增方法，不会自动替换原show()。\n\n编译阶段先选择要调用的方法签名；对于可重写的实例方法，运行时再由实际对象决定执行哪个实现。父类public方法不能被重写为private。static方法不能按实例方法的方式重写。\n\n## 四 final与abstract规定扩展方式\n\nfinal方法不能被子类重写，是否写@Override都不改变这个限制。final类不能被继承，例如String。final字段只能赋值一次，但它不是本课的主要考点。\n\nabstract方法只有声明，没有方法体，通常交给子类实现。abstract类不能直接new，也可以同时包含有实现的普通方法。抽象子类可继续保留抽象方法；能被实例化的具体子类必须具备这些方法的具体实现。\n\n```java\nabstract class RobotPart {\n    public abstract void show();\n    public final void reset() { System.out.println(\"复位\"); }\n}\nclass LightPart extends RobotPart {\n    @Override\n    public void show() { System.out.println(\"灯光模块\"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        RobotPart p = new LightPart();\n        p.show();\n        p.reset();\n    }\n}\n```\n\n两行输出依次为“灯光模块”和“复位”。LightPart实现show()，继承并使用final的reset()。若在LightPart中重新声明同签名reset()，会编译报错。\n\n### 访问权限与封装\n\npublic成员按访问规则可供外部使用；private成员只能由所属类直接访问。protected还允许同包访问，并允许跨包子类按继承规则访问，不能简化成“只有本类和子类”。本课练习不涉及跨包访问的额外细节。\n\n### 课后检查\n\n能否解释非法setter调用为什么不会改掉原值？\n\n能否说明super(...)、this(...)和super.方法()分别调用什么？\n\n能否用方法名、参数列表、访问权限判断是重写还是重载？\n\n能否判断一个子类能否被实例化，以及哪些父类方法不能被重写？\n\n### 下一课 底盘介绍\n\nJava基础语法将继续用于机器人底盘与控制程序。先完成客观题，再用本课程序题练习两种对象的双向匹配。",
+  "fillQuestions": [
+    {
+      "id": "w6-q01",
+      "type": "boolean",
+      "prompt": "字段声明为private后，即使是该字段所属类中的public setter，也不能再修改它。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "private限制其他类直接访问该成员，不禁止所属类自己的方法读写它。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ],
+      "points": 4
+    },
+    {
+      "id": "w6-q02",
+      "type": "boolean",
+      "prompt": "父类的public getter可以被子类继承。子类可以调用这个getter，间接读取由父类管理的private字段。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "子类继承可访问的public方法，由父类方法读取父类自己的private字段；子类并没有因此获得直接访问该字段的权限。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ],
+      "points": 4
+    },
+    {
+      "id": "w6-q03",
+      "type": "boolean",
+      "prompt": "父类只有Arm(String who)这一构造方法时，ServoArm只写extends Arm而不声明任何构造方法，就可以直接使用new ServoArm(\"社员甲\")。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "构造方法不被继承。这里既没有ServoArm(String)构造，自动提供的无参构造还会尝试super()，而父类没有无参构造。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ],
+      "points": 4
+    },
+    {
+      "id": "w6-q04",
+      "type": "boolean",
+      "prompt": "如果子类的方法本身已经符合重写规则，即使省略@Override注解，它仍然可以重写父类的实例方法。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "是否重写由方法声明及继承关系决定。@Override提供编译检查，建议保留，但不是重写成立的必要条件。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ],
+      "points": 4
+    },
+    {
+      "id": "w6-q05",
+      "type": "boolean",
+      "prompt": "一个显式声明为abstract的子类，可以暂不实现继承而来的抽象方法；这个子类仍然不能被直接实例化。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "抽象子类可以继续保留抽象方法。需要被实例化的具体子类才必须具备所有继承抽象方法的具体实现。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ],
+      "points": 4
+    },
+    {
+      "id": "w6-q06",
+      "type": "choice",
+      "prompt": "下列程序的完整输出是什么？四个选项都表示同一行字符，不含额外空格。",
+      "code": "class BaseArm {\n    public void show() { System.out.print(\"A\"); }\n}\nclass ChildArm extends BaseArm {\n    @Override\n    public void show() {\n        super.show();\n        System.out.print(\"B\");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        BaseArm arm = new ChildArm();\n        arm.show();\n    }\n}",
+      "options": [
+        {
+          "value": "A",
+          "text": "A"
+        },
+        {
+          "value": "B",
+          "text": "B"
+        },
+        {
+          "value": "C",
+          "text": "AB"
+        },
+        {
+          "value": "D",
+          "text": "BA"
+        }
+      ],
+      "accepts": [
+        "C"
+      ],
+      "explanation": "arm实际引用ChildArm对象，执行ChildArm.show()。方法内部先用super.show()输出A，再输出B，所以完整输出为AB。",
+      "points": 8
+    },
+    {
+      "id": "w6-q07",
+      "type": "choice",
+      "prompt": "以下关于重写和重载的说法，哪一项正确？",
+      "options": [
+        {
+          "value": "A",
+          "text": "方法名和参数列表相同时，只改变返回类型就能构成重载。"
+        },
+        {
+          "value": "B",
+          "text": "子类重写父类public方法时，可以把访问权限改为private。"
+        },
+        {
+          "value": "C",
+          "text": "同名方法的参数列表不同，可以构成重载；不能只靠返回类型不同来构成重载。"
+        },
+        {
+          "value": "D",
+          "text": "在子类的static方法前加@Override，就可以重写父类同名的static方法。"
+        }
+      ],
+      "accepts": [
+        "C"
+      ],
+      "explanation": "重载要区分参数列表，而不能只改变返回类型。重写不能缩小访问权限；static方法不能作为实例方法重写，@Override也不能改变这一点。",
+      "points": 8
+    },
+    {
+      "id": "w6-q08",
+      "type": "choice",
+      "prompt": "给定Device类，将下列某一个选项的子类单独放在它后面。哪一项能通过Java 21编译？四个选项互不同时出现。",
+      "code": "abstract class Device {\n    public abstract void show();\n    public final void reset() { }\n}",
+      "options": [
+        {
+          "value": "A",
+          "text": "class A extends Device { }"
+        },
+        {
+          "value": "B",
+          "text": "class B extends Device {\n    @Override public void show() { }\n}"
+        },
+        {
+          "value": "C",
+          "text": "class C extends Device {\n    public void show() { }\n    public void reset() { }\n}"
+        },
+        {
+          "value": "D",
+          "text": "class D extends Device {\n    private void show() { }\n}"
+        }
+      ],
+      "accepts": [
+        "B"
+      ],
+      "explanation": "B公开实现了show，且没有改写final方法reset。A是具体类却缺少show实现；C试图重写final方法；D把public方法改为private，缩小了访问权限。",
+      "points": 8
+    },
+    {
+      "id": "w6-q09",
+      "type": "fill",
+      "prompt": "pos保证是有限数值。只允许0.0到1.0之间的值，包含两个端点；非法值必须被拒绝并保留原字段值。补全if中的boolean条件，只填表达式，不填写if、花括号或分号。符合题意的等价Java表达式均可。",
+      "code": "class Arm {\n    private double grabPosition = 0.2;\n    public void setGrabPosition(double pos) {\n        if (____________________) return;\n        grabPosition = pos;\n    }\n    public double getGrabPosition() { return grabPosition; }\n}",
+      "accepts": [
+        "pos < 0 || pos > 1",
+        "!(pos >= 0 && pos <= 1)",
+        "pos >= 0 && pos <= 1 ? false : true"
+      ],
+      "explanation": "条件表示“非法”，所以小于0或大于1时return。端点0和1应当放行。取反或三元运算等价写法也应得分。",
+      "points": 8,
+      "matcher": "w6-position"
+    },
+    {
+      "id": "w6-q10",
+      "type": "fill",
+      "prompt": "补全ServoArm构造方法的第一条语句，将收到的who参数原样传给父类的有参构造方法。填写一条完整Java语句，包含分号。",
+      "code": "class Arm {\n    private String who;\n    public Arm(String who) { this.who = who; }\n    public String getWho() { return who; }\n}\nclass ServoArm extends Arm {\n    public ServoArm(String who) {\n        ____________________\n    }\n}",
+      "accepts": [
+        "super(who);"
+      ],
+      "explanation": "super(who);调用Arm(String who)。父类没有无参构造，不能依赖默认super()；this(who)调用同类构造，也不能在这里替代它。",
+      "points": 8,
+      "matcher": "w6-super"
+    }
+  ],
+  "codeTask": {
+    "kind": "java",
+    "grader": "w6-oop-v1",
+    "fixedMain": false,
+    "title": "FTC 年度交友大会 2.0",
+    "background": "去年，主办人在FTC找到了伙伴。今年，更多异星旅行者来到FFF星球，中央系统决定用面向对象的方式管理嘉宾。请实现Soda与ForeignTraveler，找到第一位双方都同意的旅行者。",
+    "description": "## 基类 Soda\n\nSoda保存下列5个private实例字段，通过构造方法使用this初始化。所有列出的构造与方法均为public。构造参数保证合法；构造、getter、setter和canMatch不得输出内容。\n\n- **name**：类型：String；含义：姓名\n- **gender**：类型：int；含义：0或1\n- **property**：类型：char；含义：A、B、C或D\n- **height**：类型：int；含义：身高，按构造参数保存\n- **charm**：类型：int；含义：魅力，按构造参数保存\n\n提供构造Soda(String name, int gender, char property, int height, int charm)，以及getName()、getGender()、getProperty()、getHeight()和getCharm()，分别返回对应字段。\n\nsetHeight(int height)忽略负数，其他值保存；setCharm(int charm)只保存0到100的值，包含端点。拒绝非法修改时保留原值。0到100仅限制setter修改，不限制构造初值；构造直接保存输入，不调用setter替代赋值。\n\n### canMatch 返回当前对象是否同意对方\n\n签名为boolean canMatch(Soda other)。先检查当前对象this的属性，不能把双方的身高、魅力或性别条件混在同一次判断中。\n\n- **A**：本次判断规则：不附加条件，返回true\n- **B**：本次判断规则：仅要求双方gender相同\n- **C**：本次判断规则：仅要求双方gender不同\n- **D且other也是D**：本次判断规则：直接返回true，跳过父类的身高与魅力比较\n- **D且other不是D**：本次判断规则：按other的A/B/C属性检查性别，同时要求other.height < this.height且other.charm > this.charm\n\nD遇到A/B/C时，A无性别限制，B要求双方同性，C要求双方异性。身高和魅力均为严格比较，等号不满足。使用getter读取other的字段即可。\n\n### 输出方法\n\nshowInfo()输出一行：本地盐汽水 姓名 性别 属性 身高 魅力。重载showInfo(String prefix)输出一行：prefix 姓名 性别 属性 身高 魅力。各项间单个半角空格，每次调用只换行一次。\n\n## 子类 ForeignTraveler\n\nForeignTraveler extends Soda，新增private String origin。提供public构造方法，参数依次为name、gender、property、height、charm、origin；先用super(...)初始化父类，再保存origin。可自行提供getOrigin()，但本题不强制这个额外接口。\n\n重写以下两个方法，并保留@Override：\n\nshowInfo()输出：异乡旅行者 姓名 性别 属性 身高 魅力 来自:origin。其中“来自:”使用半角冒号，与origin之间没有空格。\n\ncanMatch(Soda other)先执行“傲慢规则”：如果对方other的身高<=160，直接返回false。否则调用并返回super.canMatch(other)。检查的是对方，不是旅行者自己的身高；这条子类规则优先于父类D-D特例。\n\n## Main 的处理流程\n\n读入n，创建长度为n的Soda[] travelers。按输入顺序创建Soda或ForeignTraveler对象，存入同一个数组。\n\n创建Soda host = new Soda(\"主办人\", 0, 'D', 165, 90);。\n\n按数组顺序取出Soda类型引用t。仅当t.canMatch(host) && host.canMatch(t)为true时，双方匹配成功。\n\n成功时先输出“宣布无人罪”，再调用t.showInfo()输出其信息，立即结束遍历；没有任何成功者则只输出“罪人舞步旋”。\n\n同一个Soda数组可以存放两种实际类型的对象；用Soda引用调用被重写的实例方法时，执行实际对象的版本。这就是本题要求使用的多态。输入读取可参考随题提供的可选框架，匹配循环由你补全。",
+    "input": "首行n，1 <= n < 10。随后n条记录：\n\n```text\nLocal 姓名 性别 属性 身高 魅力\nForeign 姓名 性别 属性 身高 魅力 来自\n```\n\n姓名与来自为1到20个不含空白的字符；gender为0或1；property为A/B/C/D。身高与魅力为int范围内的正整数，构造魅力允许大于100。只有setter修改时受各自校验范围约束。",
+    "output": "成功时输出两行，第一行“宣布无人罪”，第二行调用首位匹配者的showInfo()输出。本地为“本地盐汽水 姓名 性别 属性 身高 魅力”，异乡为“异乡旅行者 姓名 性别 属性 身高 魅力 来自:origin”。无匹配时仅输出“罪人舞步旋”。各字段使用单个半角空格，不得输出调试信息或多余空行。",
+    "samples": [
+      {
+        "input": "3\nLocal 提瓦特路人甲 1 A 170 80\nForeign 枫丹水神 0 C 160 95 枫丹\nLocal 纳塔火龙 1 D 155 85\n",
+        "output": "宣布无人罪\n本地盐汽水 纳塔火龙 1 D 155 85\n"
+      },
+      {
+        "input": "3\nLocal 提瓦特路人甲 1 A 170 80\nForeign 枫丹水神 0 C 160 95 枫丹\nForeign 纳塔火龙 1 C 155 85 纳塔\n",
+        "output": "罪人舞步旋\n"
+      },
+      {
+        "input": "3\nLocal 路人 1 A 180 99\nForeign 纳塔旅人 1 C 160 95 纳塔\nLocal 备用嘉宾 1 D 150 85\n",
+        "output": "宣布无人罪\n异乡旅行者 纳塔旅人 1 C 160 95 来自:纳塔\n"
+      }
+    ],
+    "hint": "提交完整Main.java，其中Soda、ForeignTraveler和Main均在默认包，只有Main为public顶层类。读取框架可保留或改写；必须使用Soda[]及Soda类型引用调用对象方法。评分包含结构、直接调用与完整输入输出，setter、重载及Foreign对方身高160/161会被单独检查。参考实现仅管理员可见。\n\n样例2最后一人失败是因为魅力85未超过90，而不是自身身高155。Foreign检查的是对方主办人的165。样例3展示异乡成功及多个成功者只取首位。",
+    "starter": "import java.util.Scanner;\n\nclass Soda {\n    private String name;\n    private int gender;\n    private char property;\n    private int height;\n    private int charm;\n    public Soda(String name, int gender, char property, int height, int charm) {\n        // TODO 使用this初始化全部字段\n    }\n    public String getName() { return null; }\n    public int getGender() { return 0; }\n    public char getProperty() { return 'A'; }\n    public int getHeight() { return 0; }\n    public int getCharm() { return 0; }\n    public void setHeight(int height) { /* TODO 校验并修改 */ }\n    public void setCharm(int charm) { /* TODO 校验并修改 */ }\n    public boolean canMatch(Soda other) { return false; }\n    public void showInfo() { /* TODO 本地格式 */ }\n    public void showInfo(String prefix) { /* TODO 自定义前缀格式 */ }\n}\nclass ForeignTraveler extends Soda {\n    private String origin;\n    public ForeignTraveler(String name, int gender, char property, int height, int charm, String origin) {\n        super(name, gender, property, height, charm);\n        // TODO 初始化origin\n    }\n    @Override\n    public void showInfo() { /* TODO 异乡格式 */ }\n    @Override\n    public boolean canMatch(Soda other) { return false; }\n}\n\n// 在Main外实现Soda和ForeignTraveler。\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Soda[] travelers = new Soda[n];\n        for (int i = 0; i < n; i++) {\n            String type = sc.next();\n            String name = sc.next();\n            int gender = sc.nextInt();\n            char property = sc.next().charAt(0);\n            int height = sc.nextInt();\n            int charm = sc.nextInt();\n            if (type.equals(\"Local\")) {\n                travelers[i] = new Soda(name, gender, property, height, charm);\n            } else {\n                String origin = sc.next();\n                travelers[i] = new ForeignTraveler(name, gender, property, height, charm, origin);\n            }\n        }\n        Soda host = new Soda(\"主办人\", 0, 'D', 165, 90);\n        // TODO 按顺序检查双方是否同意，调用t.showInfo()，只输出第一位成功者。\n        // TODO 若无人成功，输出“罪人舞步旋”。\n    }\n}",
+    "referenceSource": "import java.util.Scanner;\n\nclass Soda {\n    private String name;\n    private int gender;\n    private char property;\n    private int height;\n    private int charm;\n\n    public Soda(String name, int gender, char property, int height, int charm) {\n        this.name = name;\n        this.gender = gender;\n        this.property = property;\n        this.height = height;\n        this.charm = charm;\n    }\n    public String getName() { return name; }\n    public int getGender() { return gender; }\n    public char getProperty() { return property; }\n    public int getHeight() { return height; }\n    public int getCharm() { return charm; }\n    public void setHeight(int height) {\n        if (height >= 0) this.height = height;\n    }\n    public void setCharm(int charm) {\n        if (charm >= 0 && charm <= 100) this.charm = charm;\n    }\n    public boolean canMatch(Soda other) {\n        if (this.property == 'D') {\n            if (other.getProperty() == 'D') return true;\n            boolean genderOk = false;\n            if (other.getProperty() == 'A') genderOk = true;\n            else if (other.getProperty() == 'B') genderOk = this.gender == other.getGender();\n            else if (other.getProperty() == 'C') genderOk = this.gender != other.getGender();\n            return genderOk && other.getHeight() < this.height && other.getCharm() > this.charm;\n        }\n        if (this.property == 'A') return true;\n        if (this.property == 'B') return this.gender == other.getGender();\n        if (this.property == 'C') return this.gender != other.getGender();\n        return false;\n    }\n    public void showInfo() {\n        System.out.println(\"本地盐汽水 \" + name + \" \" + gender + \" \" + property + \" \" + height + \" \" + charm);\n    }\n    public void showInfo(String prefix) {\n        System.out.println(prefix + \" \" + name + \" \" + gender + \" \" + property + \" \" + height + \" \" + charm);\n    }\n}\nclass ForeignTraveler extends Soda {\n    private String origin;\n    public ForeignTraveler(String name, int gender, char property, int height, int charm, String origin) {\n        super(name, gender, property, height, charm);\n        this.origin = origin;\n    }\n    public String getOrigin() { return origin; }\n    @Override\n    public void showInfo() {\n        System.out.println(\"异乡旅行者 \" + getName() + \" \" + getGender() + \" \" + getProperty() + \" \" + getHeight() + \" \" + getCharm() + \" 来自:\" + origin);\n    }\n    @Override\n    public boolean canMatch(Soda other) {\n        if (other.getHeight() <= 160) return false;\n        return super.canMatch(other);\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Soda[] travelers = new Soda[n];\n        for (int i = 0; i < n; i++) {\n            String type = sc.next();\n            if (type.equals(\"Local\")) {\n                travelers[i] = new Soda(sc.next(), sc.nextInt(), sc.next().charAt(0), sc.nextInt(), sc.nextInt());\n            } else {\n                travelers[i] = new ForeignTraveler(sc.next(), sc.nextInt(), sc.next().charAt(0), sc.nextInt(), sc.nextInt(), sc.next());\n            }\n        }\n        Soda host = new Soda(\"主办人\", 0, 'D', 165, 90);\n        boolean found = false;\n        for (int i = 0; i < n; i++) {\n            Soda t = travelers[i];\n            if (t.canMatch(host) && host.canMatch(t)) {\n                System.out.println(\"宣布无人罪\");\n                t.showInfo();\n                found = true;\n                break;\n            }\n        }\n        if (!found) System.out.println(\"罪人舞步旋\");\n    }\n}",
+    "compare": "exact",
+    "tests": [
+      {
+        "name": "类与私有实例字段（4分）",
+        "scenario": "part0",
+        "points": 4
+      },
+      {
+        "name": "构造与this/super（4分）",
+        "scenario": "part1",
+        "points": 4
+      },
+      {
+        "name": "getter与setter校验（6分）",
+        "scenario": "part2",
+        "points": 6
+      },
+      {
+        "name": "Soda匹配逻辑（10分）",
+        "scenario": "part3",
+        "points": 10
+      },
+      {
+        "name": "子类匹配重写（6分）",
+        "scenario": "part4",
+        "points": 6
+      },
+      {
+        "name": "信息输出与重载（6分）",
+        "scenario": "part5",
+        "points": 6
+      },
+      {
+        "name": "Main双向匹配与首位输出（4分）",
+        "scenario": "part6",
+        "points": 4
+      }
+    ]
+  }
+}

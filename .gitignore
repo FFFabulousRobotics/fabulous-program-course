@@ -1,0 +1,21 @@
+# Local accounts, sessions, course edits, submissions, backups and test data.
+/data/*
+!/data/.gitkeep
+.sites-runtime/
+sdk/harness/
+vendor/beta-build/classes/
+vendor/beta-build/compile.args
+vendor/beta-build/runtime.json
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+
+/outputs/
+/sdk/runtime.json
+/sdk/preview-runtime.json
+/sdk/*.aar
+/vendor/beta8397-master.zip
+*.local.json

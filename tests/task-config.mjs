@@ -1,0 +1,40 @@
+import {seedTestAccounts} from './fixtures.mjs';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,readFile} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
+import {validateTask,defaultRules} from '../src/task-config.mjs';
+const root=resolve(import.meta.dirname,'..'),data=await mkdtemp(join(root,'data','config-test-')),port=5176,base='http://127.0.0.1:'+port;
+await seedTestAccounts(data);
+const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,PORT:String(port),FP_DATA_DIR:data},windowsHide:true,stdio:['ignore','pipe','pipe']});let logs='';child.stdout.on('data',x=>logs+=x);child.stderr.on('data',x=>logs+=x);
+async function call(path,token,body,status=200){const r=await fetch(base+path,{method:body?'POST':'GET',headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const v=await r.json();assert.equal(r.status,status,JSON.stringify(v));return v;}
+try{
+ for(let i=0;i<80&&!logs.includes('FabulousProgram ·');i++)await delay(150);assert.ok(logs.includes('FabulousProgram ·'),logs);
+ const admin=await call('/api/auth/login',null,{username:'admin',password:'admin123'}),member=await call('/api/auth/login',null,{username:'member',password:'member123'});
+ const task=validateTask({kind:'java',title:'加法测试',description:'相加',starter:'public class Main {}',tests:[{name:'求和',input:'2 3\n',expected:'5\n'}],compare:'exact'});
+ const source='public class Main {public static void main(String[] a){java.util.Scanner s=new java.util.Scanner(System.in);System.out.println(s.nextInt()+s.nextInt());}}';
+ await call('/api/admin/trial',member.token,{codeTask:task,source},403);
+ const trial=t=>call('/api/admin/trial',admin.token,{codeTask:t,source});
+ assert.equal((await trial(task)).status,'AC');
+ assert.equal((await trial({...task,tests:[{name:'变化',input:'2 3',expected:'6'}]})).status,'WA');
+ assert.equal((await trial({...task,compare:'tokens',tests:[{name:'空白',input:'2 3',expected:' 5  '}]})).status,'AC');
+ await call('/api/admin/trial',admin.token,{codeTask:{...task,tests:[]},source},400);
+ const saved=await call('/api/admin/lessons',admin.token,{weekId:'week-1',title:'配置课程',content:'# 配置课程',published:true,codeTask:task},200),id=saved.lesson.id;
+ assert.equal((await call('/api/lessons/'+id,member.token)).lesson.codeTask.tests[0].expected,undefined);
+ assert.equal((await call('/api/submit/code',member.token,{lessonId:id,source})).status,'AC');
+ await call('/api/admin/lessons',admin.token,{id,codeTask:{...task,description:'只改题干'}});
+ assert.equal((await call('/api/lessons/'+id,member.token)).progress.codePassed,true);
+ await call('/api/admin/lessons',admin.token,{id,codeTask:{...task,tests:[{name:'新条件',input:'2 3',expected:'6'}]}});
+ assert.equal((await call('/api/lessons/'+id,member.token)).progress.codePassed,false);
+ const wa=await call('/api/submit/code',member.token,{lessonId:id,source});assert.equal(wa.status,'WA');assert.equal(wa.cases[0].expected,undefined);
+ assert.equal((await call('/api/submissions',admin.token)).submissions.length,0);
+ const robot=validateTask({kind:'iterative',title:'自定义机器人条件',tests:[{name:'5 次',scenario:'5'}],rules:{...defaultRules('iterative'),annotation:'CustomOp',key:'阶段',ready:'就绪',running:'运行',stopped:'停止'}});
+ const robotSource='import com.qualcomm.robotcore.eventloop.opmode.*;@TeleOp(name="CustomOp") public class CustomOp extends OpMode {public void init(){telemetry.addData("阶段","就绪");telemetry.update();} public void loop(){telemetry.addData("阶段","运行");telemetry.update();} public void stop(){telemetry.addData("阶段","停止");telemetry.update();}}';
+ assert.equal((await call('/api/admin/trial',admin.token,{codeTask:robot,source:robotSource})).status,'AC');
+ assert.equal((await call('/api/admin/trial',admin.token,{codeTask:{...robot,rules:{...robot.rules,running:'不同状态'}},source:robotSource})).status,'WA');
+ await call('/api/admin/trial',admin.token,{codeTask:{...robot,tests:[{name:'非法',scenario:'101'}]},source:robotSource},400);
+ await call('/api/admin/lessons',admin.token,{id,codeTask:robot});assert.equal((await call('/api/lessons/'+id,member.token)).lesson.codeTask.rules,undefined);
+ const db=JSON.parse(await readFile(join(data,'store.json'),'utf8'));assert.equal(db.submissions.length,2);assert.equal(db.lessons.find(l=>l.id===id).codeTask.rules.key,'阶段');
+ console.log('PASS: editable stdin/output, comparisons, custom robot telemetry and loop count, real AC/WA changes, hidden conditions, admin-only trial, no trial grades, persisted config and progress invalidation');
+}finally{if(child.exitCode===null){child.kill();await new Promise(r=>child.once('close',r));}}

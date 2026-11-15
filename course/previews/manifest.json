@@ -1,0 +1,26 @@
+{
+  "course/W0.docx": {
+    "file": "W0-fast.pdf",
+    "sha256": "c1a87c168970d422225ef43acaad1c9bf0dd69364450713a9b0406aaba70c53c"
+  },
+  "course/W1.docx": {
+    "file": "W1-fast.pdf",
+    "sha256": "66aa3f137ca228888a4100ce73209669d6d7dd8dbe4925d237a868b7adad03c0"
+  },
+  "course/LearnJavaForFTC.pdf": {
+    "file": "W-fast.pdf",
+    "sha256": "9e8315c24fc13bf0fd6998f4d23a8d55c2c329dccd7fe579f7f37591073ac7eb"
+  },
+  "course/W6/W6学案.docx": {
+    "file": "W6-reading.pdf",
+    "sha256": "33b0c436259a407c4d9f3ebcf15c4af25b24a2ec6f5b024cb07f48a010ec0fa9"
+  },
+  "course/W2/W2.docx": {
+    "file": "W2-reading.pdf",
+    "sha256": "f0c1672a73617a3c127f8647c4aaa0b880eb208c2bc4ecdadb1a7597cfb28fdc"
+  },
+  "course/W1-W3 Java知识点汇总.docx": {
+    "file": "W1-W3-reading.pdf",
+    "sha256": "a8de9cfb566baf5b07c223b5c4488b487700d176b7437b5722815febaca4c4e2"
+  }
+}

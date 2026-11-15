@@ -1,0 +1,61 @@
+import {seedTestAccounts} from './fixtures.mjs';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,readFile} from 'node:fs/promises';
+import {migrateCourses} from '../src/course-structure.mjs';
+import {lessons} from '../src/curriculum.mjs';
+const fixture={lessons:structuredClone(lessons),submissions:[],progress:[],drafts:[]};
+for(let n=5;n<=9;n++)fixture.lessons.push({id:'placeholder-'+n,code:'W'+n,order:n,title:'新教程',subtitle:'',content:'# 新教程\n\n在这里编写课程内容。',published:false,fillQuestions:[],codeTask:null});
+fixture.drafts.push({userId:'keep',lessonId:'placeholder-9',source:'private draft'});
+assert.deepEqual(migrateCourses(fixture),[5,6,7,8].map(n=>'placeholder-'+n));assert.ok(fixture.lessons.some(l=>l.id==='placeholder-9'));assert.equal(fixture.drafts.length,1);assert.deepEqual(migrateCourses(fixture),[]);assert.equal(fixture.weeks.length,1);
+const data=await mkdtemp(process.cwd()+'/data/test-courses-'),base='http://127.0.0.1:5190';let child;
+await seedTestAccounts(data);
+async function start(){let logs='';child=spawn(process.execPath,['server.mjs'],{env:{...process.env,PORT:'5190',FP_DATA_DIR:data},stdio:['ignore','pipe','pipe']});child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);for(let i=0;i<100;i++){if(logs.includes('FabulousProgram ·'))return;if(child.exitCode!==null)throw Error(logs);await new Promise(r=>setTimeout(r,100));}throw Error(logs);}
+async function stop(){if(child?.exitCode===null)await new Promise(r=>{child.once('exit',r);child.kill();});}
+async function api(path,token,body,method=body?'POST':'GET',expected=200){const r=await fetch(base+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const p=await r.json();assert.equal(r.status,expected,JSON.stringify(p));return p;}
+try{
+ await start();const admin=(await api('/api/auth/login',null,{username:'admin',password:'admin123'})).token,member=(await api('/api/auth/login',null,{username:'member',password:'member123'})).token;
+ let bootstrap=await api('/api/bootstrap',member);assert.equal(bootstrap.homeWeekId,'week-1');assert.deepEqual(bootstrap.lessons.map(l=>l.code),['W1.1','W1.2','W1.3','W1.4']);
+ await api('/api/admin/lessons',admin,{title:'新教程'},'POST',400);await api('/api/admin/weeks',member,{number:2,title:'No',published:false},'POST',403);
+ let week2=(await api('/api/admin/weeks',admin,{number:2,title:'类与对象',description:'第二周',published:false})).week;
+ const task={kind:'java',title:'输出数字',starter:'public class Main {}',tests:[{name:'输出',input:'',expected:'42\n'}]};
+ const lesson=(await api('/api/admin/lessons',admin,{weekId:week2.id,title:'第一个类',content:'# 类\n正文',codeTask:task,questions:[],published:true})).lesson;assert.equal(lesson.code,'W2.1');
+ await api('/api/lessons/'+lesson.id,member,undefined,'GET',404);
+ week2=(await api('/api/admin/weeks',admin,{...week2,published:true})).week;
+ assert.equal((await api('/api/bootstrap',member)).homeWeekId,week2.id);
+ await api('/api/progress/'+lesson.id,member,{});
+ const source='public class Main { public static void main(String[] args) {System.out.println(42);} }';assert.equal((await api('/api/submit/code',member,{lessonId:lesson.id,source})).status,'AC');
+ await api('/api/submit/fill',member,{lessonId:'w1-02',answers:{class:'class',main:'main',file:'Hello.java',return:'void'}});
+ let records=await api('/api/admin/users/u_member/submissions',admin);assert.ok(records.submissions.some(s=>s.source===source));assert.ok(records.submissions.some(s=>s.answers?.class==='class'&&s.questions.some(q=>q.id==='class')));assert.equal(records.user.passwordHash,undefined);
+ await api('/api/admin/users/u_member/submissions',member,undefined,'GET',403);await api('/api/admin/users/no-such-user/submissions',admin,undefined,'GET',404);
+ await api('/api/admin/course-settings',admin,{homeWeekId:'week-1'});assert.equal((await api('/api/bootstrap',member)).homeWeekId,'week-1');
+ const week10=(await api('/api/admin/weeks',admin,{number:10,title:'拓展',description:'',published:true})).week;
+ await api('/api/admin/lessons',admin,{weekId:week10.id,title:'',content:'text'},'POST',400);
+ await api('/api/admin/lessons',admin,{weekId:week10.id,title:'空发布',content:'',published:true},'POST',400);
+ const later=(await api('/api/admin/lessons',admin,{weekId:week10.id,title:'拓展教程',content:'# 拓展',published:true})).lesson;
+ bootstrap=await api('/api/bootstrap',member);assert.deepEqual(bootstrap.weeks.map(w=>w.code),['W1','W2','W10']);assert.equal(bootstrap.homeWeekId,'week-1');
+ await api('/api/admin/course-settings',admin,{homeWeekId:null});assert.equal((await api('/api/bootstrap',member)).homeWeekId,week10.id);
+ const second=(await api('/api/admin/lessons',admin,{weekId:week2.id,title:'构造方法',content:'构造方法',published:true})).lesson;
+ const third=(await api('/api/admin/lessons',admin,{weekId:week2.id,title:'this 与 new',content:'this/new',published:true})).lesson;
+ await api('/api/admin/weeks/'+week2.id+'/lesson-order',admin,{lessonIds:[third.id,lesson.id,second.id]});
+ bootstrap=await api('/api/bootstrap',admin);assert.deepEqual(bootstrap.lessons.filter(l=>l.weekId===week2.id).map(l=>[l.id,l.code]),[[third.id,'W2.1'],[lesson.id,'W2.2'],[second.id,'W2.3']]);
+ assert.equal((await api('/api/lessons/'+lesson.id,member)).progress.codePassed,true);
+ await api('/api/admin/weeks/'+week2.id+'/lesson-order',admin,{lessonIds:[third.id,third.id,second.id]},'POST',400);
+ await api('/api/admin/weeks/'+week2.id+'/lesson-order',member,{lessonIds:[third.id,lesson.id,second.id]},'POST',403);
+ await api('/api/admin/lessons',admin,{id:lesson.id,weekId:'week-1',position:2,title:'类教程已编辑'});
+ assert.equal((await api('/api/lessons/'+lesson.id,member)).lesson.code,'W1.2');assert.equal((await api('/api/lessons/'+lesson.id,member)).progress.codePassed,true);
+ week2=(await api('/api/admin/weeks',admin,{...week2,number:3})).week;assert.equal((await api('/api/lessons/'+third.id,member)).lesson.code,'W3.1');
+ await api('/api/admin/weeks',admin,{...week2,number:1},'POST',409);
+ await api('/api/admin/weeks/'+week10.id,admin,undefined,'DELETE',409);
+ await api('/api/admin/lessons/'+later.id,member,undefined,'DELETE',403);await api('/api/admin/lessons/'+later.id,admin,undefined,'DELETE');await api('/api/admin/weeks/'+week10.id,admin,undefined,'DELETE');assert.equal((await api('/api/bootstrap',member)).homeWeekId,week2.id);
+ const late=api('/api/submit/code',member,{lessonId:lesson.id,source:'public class Delay {public static void main(String[] args)throws Exception{Thread.sleep(800);System.out.println(42);}}'},'POST',404);
+ await new Promise(r=>setTimeout(r,100));await api('/api/admin/lessons/'+lesson.id,admin,undefined,'DELETE');await late;
+ records=await api('/api/admin/users/u_member/submissions',admin);assert.equal(records.submissions.filter(s=>s.lessonId===lesson.id).length,1);assert.ok(records.submissions.find(s=>s.lessonId===lesson.id).archived);
+ await api('/api/admin/course-settings',admin,{homeWeekId:'week-1'});
+ let w1=(await api('/api/bootstrap',admin)).weeks.find(w=>w.id==='week-1');await api('/api/admin/weeks',admin,{...w1,published:false});
+ assert.equal((await api('/api/bootstrap',member)).homeWeekId,week2.id);await api('/api/lessons/w1-02',member,undefined,'GET',404);
+ await api('/api/admin/course-settings',admin,{homeWeekId:'week-1'},'POST',400);
+ await stop();await start();bootstrap=await api('/api/bootstrap',admin);assert.ok(!bootstrap.lessons.some(l=>l.id===lesson.id));assert.equal(bootstrap.homeWeekId,week2.id);
+ const stored=JSON.parse(await readFile(data+'/store.json','utf8'));assert.ok(stored.archivedLessons.some(l=>l.id===lesson.id));assert.ok(stored.progress.some(p=>p.lessonId===lesson.id&&p.codePassed));
+ console.log('PASS: safe placeholder migration, two-level numbering and numeric sort, week/lesson create-edit-delete, reorder/move with preserved grades, homepage auto/manual and fallback, publication permissions, late submission guard, per-user code/fill details, archive and restart persistence');console.log(data);
+}finally{await stop();}

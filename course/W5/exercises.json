@@ -1,0 +1,1906 @@
+{
+  "version": 1,
+  "title": "专项训练",
+  "papers": [
+    {
+      "key": "bottle",
+      "title": "W5专项训练 · 汽水装箱",
+      "subtitle": "类与对象基础、执行顺序、FTC入门和完整作答",
+      "fillQuestions": [
+        {
+          "id": "w5-bottle-q01",
+          "type": "boolean",
+          "prompt": "下面的Salt方法是构造方法。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "声明了void返回类型的是普通方法。此类仍会由编译器提供无参构造方法。",
+          "code": "class Salt {\n    void Salt() { }\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q02",
+          "type": "boolean",
+          "prompt": "执行new Cup(8)后，新对象的level为8。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "参数level遮蔽字段，level=level没有给字段赋值，字段仍为3。",
+          "code": "class Cup {\n    int level = 3;\n    Cup(int level) { level = level; }\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q03",
+          "type": "boolean",
+          "prompt": "static int stock=3属于类。只在字段声明处初始化时，再创建同类对象不会把stock重置为3。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "类变量由所有对象共享，new不会重复执行类变量的声明初始化。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q04",
+          "type": "boolean",
+          "prompt": "下面的rate最终为3.5。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "先把7转换为double，再进行浮点除法。",
+          "code": "double rate = (double) 7 / 2;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q05",
+          "type": "boolean",
+          "prompt": "在有效FTC类中使用@Autonomous(name=\"GayTeleOp\")，程序仍归入自动程序列表。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "列表类型由注解决定，name只决定显示名称。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q06",
+          "type": "choice",
+          "prompt": "程序输出哪个数？",
+          "points": 10,
+          "accepts": [
+            "C"
+          ],
+          "explanation": "奇数轮加1后继续加2，偶数轮加2，三轮合计3+2+3=8。",
+          "code": "int score = 0;\nfor (int i = 1; i <= 3; i++) {\n    switch (i % 2) {\n        case 1: score += 1;\n        case 0: score += 2; break;\n    }\n}\nSystem.out.println(score);",
+          "options": [
+            {
+              "value": "A",
+              "text": "6"
+            },
+            {
+              "value": "B",
+              "text": "7"
+            },
+            {
+              "value": "C",
+              "text": "8"
+            },
+            {
+              "value": "D",
+              "text": "9"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q07",
+          "type": "choice",
+          "prompt": "以下方法属于迭代式OpMode。SDK调用一次init，再调用两次loop。两次遥测传入值依次是？",
+          "points": 10,
+          "accepts": [
+            "B"
+          ],
+          "explanation": "init里的局部变量没有修改字段，loop使用字段，从5递增到6和7。",
+          "code": "int n = 5;\npublic void init() { int n = 0; n++; }\npublic void loop() { telemetry.addData(\"n\", ++n); }",
+          "options": [
+            {
+              "value": "A",
+              "text": "1、2"
+            },
+            {
+              "value": "B",
+              "text": "6、7"
+            },
+            {
+              "value": "C",
+              "text": "6、6"
+            },
+            {
+              "value": "D",
+              "text": "0、1"
+            }
+          ]
+        },
+        {
+          "id": "w5-bottle-q08",
+          "type": "fill",
+          "prompt": "cans瓶盐汽水每箱最多装perBox瓶。只填适用于全部1<=cans<=1000、1<=perBox<=100的最少箱数表达式。只能用这两个变量、整数常量、已学运算符和括号，不用浮点数或方法。",
+          "points": 10,
+          "accepts": [
+            "(cans + perBox - 1) / perBox"
+          ],
+          "explanation": "整数向上取整；也接受按余数是否为0分情况的等价表达式。",
+          "code": "int boxes = ____________________;",
+          "matcher": "w5-cans"
+        },
+        {
+          "id": "w5-bottle-q09",
+          "type": "fill",
+          "prompt": "已知字符S的编码值为83。只填完整输出，不填写输出语句。",
+          "points": 10,
+          "accepts": [
+            "84-5"
+          ],
+          "explanation": "字符先参与数值加法；遇到字符串后拼接，括号内仍先做加法。",
+          "code": "System.out.println('S' + 1 + \"-\" + (2 + 3));"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "bottle",
+        "answerClass": "SaltBottle",
+        "title": "盐汽水的开盖尖叫",
+        "background": "盐汽水一激动就被摇出泡泡，Gay哥只能拿有限的毛巾收拾桌面。请用SaltBottle模拟每瓶独立的泡泡值和全场共享的毛巾。",
+        "description": "1. 字段为private int fizz和private static int towels=3。每个对象的fizz独立，初值由构造参数指定，保证在0到12之间。\n\n2. shake(power)：power为0到20的整数，泡泡值增加power，超过12时固定为12。\n\n3. calm()：只有fizz>0且towels>0时，消耗1条毛巾，fizz减少4，最低为0。失败操作不改变任何字段。\n\n4. show()只输出“fizz towels”，两个值之间一个半角空格，末尾一次换行。其他方法静默。新对象不能重置毛巾。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()只输出“fizz towels”，两个值之间一个半角空格，末尾一次换行。其他方法静默。新对象不能重置毛巾。",
+        "sampleOutput": "0 2\n8 1\n0 1",
+        "starter": "class SaltBottle {\n    private int fizz;\n    private static int towels = 3;\n\n    public SaltBottle(int fizz) {\n        // 在这里补全\n    }\n    public void shake(int power) {\n        // 在这里补全\n    }\n    public void calm() {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        SaltBottle a = new SaltBottle(2);\n         SaltBottle b = new SaltBottle(10);\n         a.calm(); a.show();\n         b.shake(5); b.calm(); b.show();\n         a.calm(); a.show();\n    }\n}",
+        "referenceSource": "class SaltBottle {\n     private int fizz;\n     private static int towels = 3;\n     public SaltBottle(int fizz) { this.fizz = fizz; }\n     public void shake(int power) {\n         fizz += power;\n         if (fizz > 12) fizz = 12;\n     }\n     public void calm() {\n         if (fizz > 0 && towels > 0) {\n             towels--;\n             fizz -= 4;\n             if (fizz < 0) fizz = 0;\n         }\n     }\n     public void show() { System.out.println(fizz + \" \" + towels); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        SaltBottle a = new SaltBottle(2);\n         SaltBottle b = new SaltBottle(10);\n         a.calm(); a.show();\n         b.shake(5); b.calm(); b.show();\n         a.calm(); a.show();\n    }\n}",
+        "solution": "字段为private int fizz和private static int towels=3。每个对象的fizz独立，初值由构造参数指定，保证在0到12之间。\n\nshake(power)：power为0到20的整数，泡泡值增加power，超过12时固定为12。\n\ncalm()：只有fizz>0且towels>0时，消耗1条毛巾，fizz减少4，最低为0。失败操作不改变任何字段。\n\nshow()只输出“fizz towels”，两个值之间一个半角空格，末尾一次换行。其他方法静默。新对象不能重置毛巾。\n\n类与对象基础、执行顺序、FTC入门和完整作答",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口与构造（8分）",
+            "scenario": "part0",
+            "points": 8
+          },
+          {
+            "name": "摇晃累加与上限（8分）",
+            "scenario": "part1",
+            "points": 8
+          },
+          {
+            "name": "平静条件和失败不变（8分）",
+            "scenario": "part2",
+            "points": 8
+          },
+          {
+            "name": "减泡下限（6分）",
+            "scenario": "part3",
+            "points": 6
+          },
+          {
+            "name": "共享毛巾与耗尽（6分）",
+            "scenario": "part4",
+            "points": 6
+          },
+          {
+            "name": "严格输出和静默（4分）",
+            "scenario": "part5",
+            "points": 4
+          }
+        ]
+      }
+    },
+    {
+      "key": "photo",
+      "title": "W5专项训练 · 拍照任务",
+      "subtitle": "对象与构造、共享变量、短路求值和表达式限制",
+      "fillQuestions": [
+        {
+          "id": "w5-photo-q01",
+          "type": "boolean",
+          "prompt": "执行new Mug(9)后，该对象的value为11。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "value+=2修改的是构造参数，字段仍为4。",
+          "code": "class Mug {\n    int value = 4;\n    Mug(int value) { value += 2; }\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q02",
+          "type": "boolean",
+          "prompt": "下列代码结束后，a.x为0，b.x为5。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "a重新指向新对象，b仍指向最初那个对象。",
+          "code": "class Jar { int x; }\nJar a = new Jar();\nJar b = a;\na = new Jar();\nb.x = 5;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q03",
+          "type": "boolean",
+          "prompt": "无参构造方法第一句this(2)调用同类有参构造方法。若其中都没有其他new操作，一次new仍只创建一个对象。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "两个构造方法体在同一个对象的初始化过程中执行。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q04",
+          "type": "boolean",
+          "prompt": "执行以下代码后，n为1。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "&&左侧为false，右侧++n不执行，n仍为0。",
+          "code": "int n = 0;\nboolean ok = n > 0 && ++n > 1;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q05",
+          "type": "boolean",
+          "prompt": "有效FTC类使用@TeleOp(name=\"Autonomous\")后会被注册为自动程序。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "@TeleOp注册手动程序，显示名称不会改变类别。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q06",
+          "type": "choice",
+          "prompt": "执行后输出什么？",
+          "points": 10,
+          "accepts": [
+            "B"
+          ],
+          "explanation": "创建a时fee先增为2，a.points=2-2=0；创建b后fee=3。",
+          "code": "class Pass {\n    static int fee = 1;\n    int points;\n    Pass() { this(2); points -= fee; }\n    Pass(int points) { this.points = points; fee++; }\n}\nPass a = new Pass();\nPass b = new Pass(5);\nSystem.out.println(a.points + \",\" + b.points + \",\" + Pass.fee);",
+          "options": [
+            {
+              "value": "A",
+              "text": "1,5,3"
+            },
+            {
+              "value": "B",
+              "text": "0,5,3"
+            },
+            {
+              "value": "C",
+              "text": "0,5,2"
+            },
+            {
+              "value": "D",
+              "text": "2,5,3"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q07",
+          "type": "choice",
+          "prompt": "以下方法属于迭代式OpMode，init一次、loop两次，遥测数值依次是什么？",
+          "points": 10,
+          "accepts": [
+            "C"
+          ],
+          "explanation": "局部level与字段分离，loop递增的是初值7的字段。",
+          "code": "int level = 7;\npublic void init() { int level = 2; level++; }\npublic void loop() { telemetry.addData(\"level\", ++level); }",
+          "options": [
+            {
+              "value": "A",
+              "text": "3、4"
+            },
+            {
+              "value": "B",
+              "text": "8、8"
+            },
+            {
+              "value": "C",
+              "text": "8、9"
+            },
+            {
+              "value": "D",
+              "text": "7、8"
+            }
+          ]
+        },
+        {
+          "id": "w5-photo-q08",
+          "type": "fill",
+          "prompt": "a、b均为boolean，恰好一人为true时通过。只能用a、b、&&、||、!和括号，不能使用==、!=、^或true/false。只填表达式。",
+          "points": 10,
+          "accepts": [
+            "(a && !b) || (!a && b)"
+          ],
+          "explanation": "需要同时满足逻辑等价与符号限制；(a||b)&&!(a&&b)也可。",
+          "code": "boolean pass = ____________________;",
+          "matcher": "exclusive"
+        },
+        {
+          "id": "w5-photo-q09",
+          "type": "fill",
+          "prompt": "tickets张合影券每张纸最多印perSheet张。只填通用最少纸张数表达式，适用于1<=tickets<=80、1<=perSheet<=10。只用题中变量、整数常量和已学运算，不用浮点或方法。",
+          "points": 10,
+          "accepts": [
+            "(tickets + perSheet - 1) / perSheet"
+          ],
+          "explanation": "整除不多取一张，有余数才额外一张。",
+          "code": "int sheets = ____________________;",
+          "matcher": "w5-tickets"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "photo",
+        "answerClass": "PhotoTicket",
+        "title": "盐汽水和Gay哥的合影机",
+        "background": "盐汽水每摆一个造型就想打印照片，Gay哥提醒他：造型属于自己，相纸是大家共用的。请实现PhotoTicket，别让新来的盐汽水把相纸凭空补满。",
+        "description": "1. 字段为private int poses和private static int paper=5。poses范围0到4。无参构造必须用this(2)调用有参构造；有参初值保证合法。\n\n2. pose(n)：n为0到10，poses增加n但不超过4。\n\n3. printPhoto()：仅当poses>0且paper>0时，两者各减1；否则两个值都不变。创建新对象不重置paper。\n\n4. show()输出“poses paper”，单个半角空格，一次换行。其他方法不能输出任何内容。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()输出“poses paper”，单个半角空格，一次换行。其他方法不能输出任何内容。",
+        "sampleOutput": "1 4\n0 4\n3 3",
+        "starter": "class PhotoTicket {\n    private int poses;\n    private static int paper = 5;\n\n    public PhotoTicket() {\n        // 在这里补全\n    }\n    public PhotoTicket(int poses) {\n        // 在这里补全\n    }\n    public void pose(int n) {\n        // 在这里补全\n    }\n    public void printPhoto() {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        PhotoTicket a = new PhotoTicket();\n         PhotoTicket b = new PhotoTicket(0);\n         a.printPhoto(); a.show();\n         b.printPhoto(); b.show();\n         b.pose(9); b.printPhoto(); b.show();\n    }\n}",
+        "referenceSource": "class PhotoTicket {\n     private int poses;\n     private static int paper = 5;\n     public PhotoTicket() { this(2); }\n     public PhotoTicket(int poses) { this.poses = poses; }\n     public void pose(int n) {\n         poses += n;\n         if (poses > 4) poses = 4;\n     }\n     public void printPhoto() {\n         if (poses > 0 && paper > 0) { poses--; paper--; }\n     }\n     public void show() { System.out.println(poses + \" \" + paper); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        PhotoTicket a = new PhotoTicket();\n         PhotoTicket b = new PhotoTicket(0);\n         a.printPhoto(); a.show();\n         b.printPhoto(); b.show();\n         b.pose(9); b.printPhoto(); b.show();\n    }\n}",
+        "solution": "字段为private int poses和private static int paper=5。poses范围0到4。无参构造必须用this(2)调用有参构造；有参初值保证合法。\n\npose(n)：n为0到10，poses增加n但不超过4。\n\nprintPhoto()：仅当poses>0且paper>0时，两者各减1；否则两个值都不变。创建新对象不重置paper。\n\nshow()输出“poses paper”，单个半角空格，一次换行。其他方法不能输出任何内容。\n\n对象与构造、共享变量、短路求值和表达式限制",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "private字段和接口（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "构造链与this赋值（8分）",
+            "scenario": "part1",
+            "points": 8
+          },
+          {
+            "name": "摆姿势上限与零增量（6分）",
+            "scenario": "part2",
+            "points": 6
+          },
+          {
+            "name": "打印条件及失败不变（8分）",
+            "scenario": "part3",
+            "points": 8
+          },
+          {
+            "name": "独立状态和共享相纸（8分）",
+            "scenario": "part4",
+            "points": 8
+          },
+          {
+            "name": "单次换行与方法静默（4分）",
+            "scenario": "part5",
+            "points": 4
+          }
+        ]
+      }
+    },
+    {
+      "key": "light",
+      "title": "W5专项训练 · 灯光计数",
+      "subtitle": "字段遮蔽、FTC生命周期、自增输出和通用表达式",
+      "fillQuestions": [
+        {
+          "id": "w5-light-q01",
+          "type": "boolean",
+          "prompt": "下面的init执行后，类中字段step仍为4。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "init声明了同名局部变量，局部赋值不修改字段。",
+          "code": "int step = 4;\npublic void init() { int step = 0; step += 2; }",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q02",
+          "type": "boolean",
+          "prompt": "boolean running=opModeIsActive();执行一次后，running会随SDK状态自动更新。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "这是一次取值后的普通boolean变量，后续状态变化不会自动重新赋值。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q03",
+          "type": "boolean",
+          "prompt": "LinearOpMode中，写在waitForStart()前的telemetry.update()一定要等START后才可能执行。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "程序顺序执行到waitForStart才等待，此前的update可以在初始化时执行。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q04",
+          "type": "boolean",
+          "prompt": "已知字符A的编码为65，System.out.println('A'+1)输出66。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "char与整数做算术运算时提升为整数。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q05",
+          "type": "boolean",
+          "prompt": "题目要求对所有need和perBox通用时，把当前样例17和4直接写成(17+4-1)/4就满足要求。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "固定数字只计算当前样例，不能覆盖不同输入。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q06",
+          "type": "choice",
+          "prompt": "循环完整执行三轮，三次println输出依次是什么？",
+          "points": 10,
+          "accepts": [
+            "D"
+          ],
+          "explanation": "三轮输出前shown为1、3、6；每轮先输出旧值并自增，再加i。",
+          "code": "int shown = 1;\nfor (int i = 1; i <= 3; i++) {\n    System.out.println(shown++);\n    shown += i;\n}",
+          "options": [
+            {
+              "value": "A",
+              "text": "1、2、3"
+            },
+            {
+              "value": "B",
+              "text": "2、4、7"
+            },
+            {
+              "value": "C",
+              "text": "1、4、8"
+            },
+            {
+              "value": "D",
+              "text": "1、3、6"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q07",
+          "type": "choice",
+          "prompt": "一个具体类继承LinearOpMode，只写下面的方法并保留@Override。哪项正确？",
+          "points": 10,
+          "accepts": [
+            "A"
+          ],
+          "explanation": "方法签名包括参数列表；runOpMode(int)不能替代要求的无参方法。",
+          "code": "@Override\npublic void runOpMode(int round) { waitForStart(); }",
+          "options": [
+            {
+              "value": "A",
+              "text": "不能完成无参runOpMode()的重写，会编译报错"
+            },
+            {
+              "value": "B",
+              "text": "SDK自动传入round"
+            },
+            {
+              "value": "C",
+              "text": "可以正常重写，因为方法名相同"
+            },
+            {
+              "value": "D",
+              "text": "round会在每次调用时自动加1"
+            }
+          ]
+        },
+        {
+          "id": "w5-light-q08",
+          "type": "fill",
+          "prompt": "need个彩灯，每盒最多capacity个。只填通用最少盒数表达式，覆盖0<=need<=1000、1<=capacity<=100。只用这两个变量、整数常量、已学运算和括号，不用方法或浮点。",
+          "points": 10,
+          "accepts": [
+            "(need + capacity - 1) / capacity"
+          ],
+          "explanation": "need为0时也应返回0。可接受正确的整除分支式。",
+          "code": "int boxes = ____________________;",
+          "matcher": "w5-lights"
+        },
+        {
+          "id": "w5-light-q09",
+          "type": "fill",
+          "prompt": "已知G的编码为71，只写完整输出，不写println语句。",
+          "points": 10,
+          "accepts": [
+            "73-7-G"
+          ],
+          "explanation": "G+2先得到73，括号内3+4为7，最后G在字符串之后拼接。",
+          "code": "System.out.println('G' + 2 + \"-\" + (3 + 4) + \"-\" + 'G');"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "light",
+        "answerClass": "CheerLight",
+        "title": "盐汽水的三拍应援灯",
+        "background": "Gay哥按下START，盐汽水的应援灯才开始报数；按STOP后再戳按钮也不能偷偷加班。用普通Java模拟这一过程，不连接FTC硬件。",
+        "description": "1. CheerLight含private int count=10和private boolean running=false。init()必须把字段count设为0、running设为false，不可另建同名局部变量冒充初始化。\n\n2. start()把running设为true；stop()把它设为false，二者都不重置count。\n\n3. loop()每次检查当前running。为false时不输出、不改count；为true时先输出本次count并换行，再将count加2。\n\n4. show()输出“count running”，一个空格、一次换行，boolean按Java小写输出。除loop和show外均静默。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()输出“count running”，一个空格、一次换行，boolean按Java小写输出。除loop和show外均静默。",
+        "sampleOutput": "0\n2\n4\n6 false",
+        "starter": "class CheerLight {\n    private int count = 10;\n    private boolean running = false;\n\n    public void init() {\n        // 在这里补全\n    }\n    public void start() {\n        // 在这里补全\n    }\n    public void loop() {\n        // 在这里补全\n    }\n    public void stop() {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerLight light = new CheerLight();\n         light.init(); light.loop();\n         light.start();\n         light.loop(); light.loop(); light.loop();\n         light.stop(); light.loop(); light.show();\n    }\n}",
+        "referenceSource": "class CheerLight {\n     private int count = 10;\n     private boolean running = false;\n     public void init() { count = 0; running = false; }\n     public void start() { running = true; }\n     public void stop() { running = false; }\n     public void loop() {\n         if (running) { System.out.println(count); count += 2; }\n     }\n     public void show() { System.out.println(count + \" \" + running); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerLight light = new CheerLight();\n         light.init(); light.loop();\n         light.start();\n         light.loop(); light.loop(); light.loop();\n         light.stop(); light.loop(); light.show();\n    }\n}",
+        "solution": "CheerLight含private int count=10和private boolean running=false。init()必须把字段count设为0、running设为false，不可另建同名局部变量冒充初始化。\n\nstart()把running设为true；stop()把它设为false，二者都不重置count。\n\nloop()每次检查当前running。为false时不输出、不改count；为true时先输出本次count并换行，再将count加2。\n\nshow()输出“count running”，一个空格、一次换行，boolean按Java小写输出。除loop和show外均静默。\n\n字段遮蔽、FTC生命周期、自增输出和通用表达式",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段与接口（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "init修改真实字段（8分）",
+            "scenario": "part1",
+            "points": 8
+          },
+          {
+            "name": "开始停止及每次检查（10分）",
+            "scenario": "part2",
+            "points": 10
+          },
+          {
+            "name": "先输出后增加及保留计数（10分）",
+            "scenario": "part3",
+            "points": 10
+          },
+          {
+            "name": "格式与静默（6分）",
+            "scenario": "part4",
+            "points": 6
+          }
+        ]
+      }
+    },
+    {
+      "key": "counter",
+      "title": "W5专项训练 · 比赛计分",
+      "subtitle": "整数除法、switch穿透、自增和循环中的判断时机",
+      "fillQuestions": [
+        {
+          "id": "w5-counter-q01",
+          "type": "boolean",
+          "prompt": "下面的rate等于2.75。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "11/4先得到整数2，再转换成2.0。",
+          "code": "double rate = (double) (11 / 4);",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q02",
+          "type": "boolean",
+          "prompt": "分别独立从x=3开始，单独执行语句x++;或++x;，执行后x都为4。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "独立作为语句时最终变量值相同，差别在表达式取值。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q03",
+          "type": "boolean",
+          "prompt": "switch中匹配case 1后，如果该分支没有break，就绝不会执行case 2中的语句。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "没有break时会顺序进入后续分支，不再重新检查标签是否匹配。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q04",
+          "type": "boolean",
+          "prompt": "以下代码输出3。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "累加后sum依次为1、3、6，第3轮满足条件。",
+          "code": "int sum = 0;\nfor (int i = 1; i <= 4; i++) {\n    sum += i;\n    if (sum >= 5) { System.out.println(i); break; }\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q05",
+          "type": "boolean",
+          "prompt": "n初值为5。执行telemetry.addData(\"n\",n++);再执行n+=2;，本次传给addData的值是8。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "传入旧值5，随后n先自增到6，再加2变成8。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q06",
+          "type": "choice",
+          "prompt": "以下程序输出什么？",
+          "points": 10,
+          "accepts": [
+            "C"
+          ],
+          "explanation": "++x先使x=2，真分支x++提供2并使x=3。",
+          "code": "int x = 1;\nint y = ++x > 1 ? x++ : ++x;\nSystem.out.println(x + \",\" + y);",
+          "options": [
+            {
+              "value": "A",
+              "text": "2,2"
+            },
+            {
+              "value": "B",
+              "text": "3,3"
+            },
+            {
+              "value": "C",
+              "text": "3,2"
+            },
+            {
+              "value": "D",
+              "text": "2,3"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q07",
+          "type": "choice",
+          "prompt": "程序最终输出什么？",
+          "points": 10,
+          "accepts": [
+            "B"
+          ],
+          "explanation": "i=0、1、2、3时分别加3、1、4、3，合计11。",
+          "code": "int s = 0;\nfor (int i = 0; i < 4; i++) {\n    switch (i % 3) {\n        case 0: s += 2;\n        case 1: s += 1; break;\n        case 2: s += 4; break;\n    }\n}\nSystem.out.println(s);",
+          "options": [
+            {
+              "value": "A",
+              "text": "8"
+            },
+            {
+              "value": "B",
+              "text": "11"
+            },
+            {
+              "value": "C",
+              "text": "10"
+            },
+            {
+              "value": "D",
+              "text": "12"
+            }
+          ]
+        },
+        {
+          "id": "w5-counter-q08",
+          "type": "fill",
+          "prompt": "调用find(7)返回多少？只填整数。",
+          "points": 10,
+          "accepts": [
+            "5"
+          ],
+          "explanation": "每轮先检查sum，再累加。第4轮结束sum=10，第5轮开始返回5。",
+          "code": "static int find(int n) {\n    int sum = 0;\n    for (int i = 1; i <= n; i++) {\n        if (sum >= n) return i;\n        sum += i;\n    }\n    return -1;\n}"
+        },
+        {
+          "id": "w5-counter-q09",
+          "type": "fill",
+          "prompt": "wins和rounds是int，0<=wins<=rounds且rounds>0。只填表达式，使rate按浮点除法得到比例。不得调用方法。",
+          "points": 10,
+          "accepts": [
+            "(double) wins / rounds"
+          ],
+          "explanation": "必须在除法前把至少一个操作数转为浮点；(double)(wins/rounds)不正确。",
+          "code": "double rate = ____________________;",
+          "matcher": "ratio"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "counter",
+        "answerClass": "CheerCounter",
+        "title": "盐汽水的彩虹打call机",
+        "background": "Gay哥给盐汽水安排循环应援：第1种口号故意串到第2种，大家算分算到怀疑人生。请实现CheerCounter，把这套规则稳定记下来。",
+        "description": "1. 字段为private int score=0和private int played=0。play(rounds)的rounds在0到20之间，可多次调用，轮次接着以前继续。\n\n2. 每轮先令played加1，再按played%3加分：余1加3分，余2加2分，余0加4分。必须使用switch，实现case 1先加1再无break穿透case 2加2。case 0加4后break。\n\n3. show()输出“score played average”，单空格和一次换行。played为0时average输出0.0；否则必须使用浮点除法计算score/played。\n\n4. play静默，show不改变状态。不能每次play都把轮次或总分清零。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "play静默，show不改变状态。不能每次play都把轮次或总分清零。",
+        "sampleOutput": "0 0 0.0\n5 2 2.5\n9 3 3.0",
+        "starter": "class CheerCounter {\n    private int score = 0;\n    private int played = 0;\n\n    public void play(int rounds) {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerCounter c = new CheerCounter();\n         c.show();\n         c.play(2); c.show();\n         c.play(1); c.show();\n    }\n}",
+        "referenceSource": "class CheerCounter {\n     private int score = 0;\n     private int played = 0;\n     public void play(int rounds) {\n         for (int i = 1; i <= rounds; i++) {\n             played++;\n             switch (played % 3) {\n                 case 0: score += 4; break;\n                 case 1: score += 1;\n                 case 2: score += 2; break;\n             }\n         }\n     }\n     public void show() {\n         double average = played == 0 ? 0.0 : (double) score / played;\n         System.out.println(score + \" \" + played + \" \" + average);\n     }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerCounter c = new CheerCounter();\n         c.show();\n         c.play(2); c.show();\n         c.play(1); c.show();\n    }\n}",
+        "solution": "字段为private int score=0和private int played=0。play(rounds)的rounds在0到20之间，可多次调用，轮次接着以前继续。\n\n每轮先令played加1，再按played%3加分：余1加3分，余2加2分，余0加4分。必须使用switch，实现case 1先加1再无break穿透case 2加2。case 0加4后break。\n\nshow()输出“score played average”，单空格和一次换行。played为0时average输出0.0；否则必须使用浮点除法计算score/played。\n\nplay静默，show不改变状态。不能每次play都把轮次或总分清零。\n\n整数除法、switch穿透、自增和循环中的判断时机",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口和初始状态（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "持续轮次与零轮（8分）",
+            "scenario": "part1",
+            "points": 8
+          },
+          {
+            "name": "switch进入及指定穿透（10分）",
+            "scenario": "part2",
+            "points": 10
+          },
+          {
+            "name": "浮点平均及零轮保护（10分）",
+            "scenario": "part3",
+            "points": 10
+          },
+          {
+            "name": "格式和静默（6分）",
+            "scenario": "part4",
+            "points": 6
+          }
+        ]
+      }
+    },
+    {
+      "key": "echo",
+      "title": "W5专项训练 · 口令回声",
+      "subtitle": "三元分支、自增取值、实时状态判断和连续循环",
+      "fillQuestions": [
+        {
+          "id": "w5-echo-q01",
+          "type": "boolean",
+          "prompt": "条件表达式ok?++a:++b每次都会同时执行++a和++b。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "只执行被条件选中的分支。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q02",
+          "type": "boolean",
+          "prompt": "以下代码执行后，y为2，n为3。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "后置自增先提供旧值2，再更新n。",
+          "code": "int n = 2;\nint y = n++;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q03",
+          "type": "boolean",
+          "prompt": "把opModeIsActive()的结果存入running后，即使不重新赋值，running也会自动响应STOP。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "变量保存的是一次调用所得的值。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q04",
+          "type": "boolean",
+          "prompt": "以下循环第三次println传入的值为7。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "三轮输出2、4、7；每轮先后置自增，再加i。",
+          "code": "int n = 2;\nfor (int i = 1; i <= 3; i++) {\n    System.out.println(n++);\n    n += i;\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q05",
+          "type": "boolean",
+          "prompt": "while(opModeIsActive())每次判断循环条件时都会重新调用该方法。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "方法调用位于条件位置，每次条件求值时执行。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q06",
+          "type": "choice",
+          "prompt": "程序输出什么？",
+          "points": 10,
+          "accepts": [
+            "A"
+          ],
+          "explanation": "比较使用旧值4，所以为false，但x已经为5，假分支计算5+2。",
+          "code": "int x = 4;\nint y = x++ > 4 ? ++x : x + 2;\nSystem.out.println(x + \",\" + y);",
+          "options": [
+            {
+              "value": "A",
+              "text": "5,7"
+            },
+            {
+              "value": "B",
+              "text": "6,6"
+            },
+            {
+              "value": "C",
+              "text": "5,6"
+            },
+            {
+              "value": "D",
+              "text": "6,7"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q07",
+          "type": "choice",
+          "prompt": "程序最终输出count的值是多少？",
+          "points": 10,
+          "accepts": [
+            "D"
+          ],
+          "explanation": "第1轮计数，第2轮先把running改为false，之后都不计数。",
+          "code": "boolean running = true;\nint count = 0;\nfor (int i = 1; i <= 3; i++) {\n    if (i == 2) running = false;\n    if (running) count++;\n}\nSystem.out.println(count);",
+          "options": [
+            {
+              "value": "A",
+              "text": "3"
+            },
+            {
+              "value": "B",
+              "text": "2"
+            },
+            {
+              "value": "C",
+              "text": "0"
+            },
+            {
+              "value": "D",
+              "text": "1"
+            }
+          ]
+        },
+        {
+          "id": "w5-echo-q08",
+          "type": "fill",
+          "prompt": "只填三次println输出的数，用单个空格隔开。",
+          "points": 10,
+          "accepts": [
+            "1 4 8"
+          ],
+          "explanation": "每轮先加i，再输出当前值并自增，不能把最终状态当输出。",
+          "code": "int n = 0;\nfor (int i = 1; i <= 3; i++) {\n    n += i;\n    System.out.println(n++);\n}"
+        },
+        {
+          "id": "w5-echo-q09",
+          "type": "fill",
+          "prompt": "补全已教过的FTC方法调用，使while每次判断都重新检查运行状态。只填调用表达式，不填缓存变量。",
+          "points": 10,
+          "accepts": [
+            "opModeIsActive()"
+          ],
+          "explanation": "条件直接调用方法，不能使用一次保存的boolean快照。",
+          "code": "waitForStart();\nwhile (____________________) {\n    telemetry.addLine(\"盐汽水正在彩排\");\n    telemetry.update();\n}",
+          "matcher": "active-call"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "echo",
+        "answerClass": "EchoStage",
+        "title": "Gay哥和盐汽水的回声彩排",
+        "background": "盐汽水负责喊拍子，Gay哥负责暂停。每轮喊出的数和喊完后记住的数不同，暂停期间不能出现幽灵回声。请实现EchoStage。",
+        "description": "1. 字段为private int shown=0和private boolean active=false。start()设active为true，stop()设为false，不重置shown。\n\n2. run(rounds)的rounds在0到20之间，每次调用的局部i重新从1开始。i<=rounds且当前active为true时才进入本轮。\n\n3. 每轮先用println输出shown的旧值并将shown加1，然后执行shown+=i。需在代码中使用后置自增。run(0)不输出不改值。\n\n4. show()输出“shown active”，单空格、一次换行。start和stop静默；停止后调用run不能输出或改变shown。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()输出“shown active”，单空格、一次换行。start和stop静默；停止后调用run不能输出或改变shown。",
+        "sampleOutput": "0\n2\n5 false\n5\n7 true",
+        "starter": "class EchoStage {\n    private int shown = 0;\n    private boolean active = false;\n\n    public void start() {\n        // 在这里补全\n    }\n    public void stop() {\n        // 在这里补全\n    }\n    public void run(int rounds) {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        EchoStage stage = new EchoStage();\n         stage.run(2); stage.start(); stage.run(2);\n         stage.stop(); stage.run(3); stage.show();\n         stage.start(); stage.run(1); stage.show();\n    }\n}",
+        "referenceSource": "class EchoStage {\n     private int shown = 0;\n     private boolean active = false;\n     public void start() { active = true; }\n     public void stop() { active = false; }\n     public void run(int rounds) {\n         for (int i = 1; i <= rounds && active; i++) {\n             System.out.println(shown++);\n             shown += i;\n         }\n     }\n     public void show() { System.out.println(shown + \" \" + active); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        EchoStage stage = new EchoStage();\n         stage.run(2); stage.start(); stage.run(2);\n         stage.stop(); stage.run(3); stage.show();\n         stage.start(); stage.run(1); stage.show();\n    }\n}",
+        "solution": "字段为private int shown=0和private boolean active=false。start()设active为true，stop()设为false，不重置shown。\n\nrun(rounds)的rounds在0到20之间，每次调用的局部i重新从1开始。i<=rounds且当前active为true时才进入本轮。\n\n每轮先用println输出shown的旧值并将shown加1，然后执行shown+=i。需在代码中使用后置自增。run(0)不输出不改值。\n\nshow()输出“shown active”，单空格、一次换行。start和stop静默；停止后调用run不能输出或改变shown。\n\n三元分支、自增取值、实时状态判断和连续循环",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口与初态（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "开始停止和运行条件（10分）",
+            "scenario": "part1",
+            "points": 10
+          },
+          {
+            "name": "后置自增输出旧值（10分）",
+            "scenario": "part2",
+            "points": 10
+          },
+          {
+            "name": "每次i重启及累计顺序（8分）",
+            "scenario": "part3",
+            "points": 8
+          },
+          {
+            "name": "零轮及输出规范（6分）",
+            "scenario": "part4",
+            "points": 6
+          }
+        ]
+      }
+    },
+    {
+      "key": "sound",
+      "title": "W5专项训练 · 音效控制",
+      "subtitle": "switch进入与穿透、break范围和多对象共享资源",
+      "fillQuestions": [
+        {
+          "id": "w5-sound-q01",
+          "type": "boolean",
+          "prompt": "匹配case后，没有break而顺序进入下一个case时，不会再次检验下一个标签是否等于switch表达式。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "穿透是顺序执行，不是重新匹配。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q02",
+          "type": "boolean",
+          "prompt": "下面代码结束后s为3。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "直接匹配case 2，只加2，不会向前执行case 1。",
+          "code": "int s = 0;\nswitch (2) {\n    case 1: s += 1;\n    case 2: s += 2; break;\n    default: s += 9;\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q03",
+          "type": "boolean",
+          "prompt": "for循环体里的switch执行break时，一定会同时结束外层for。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "未带标签的break结束最近一层switch或循环，这里结束switch，外层for继续。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q04",
+          "type": "boolean",
+          "prompt": "只有字段声明处给static库存赋初值，且构造方法不修改该库存时，新建对象不会把已有库存恢复。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "创建新实例不会重新初始化类变量。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q05",
+          "type": "boolean",
+          "prompt": "下面代码结束后n为9。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "先加到11，再通过if限制到9。",
+          "code": "int n = 8;\nn += 3;\nif (n > 9) n = 9;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q06",
+          "type": "choice",
+          "prompt": "循环结束后s是多少？",
+          "points": 10,
+          "accepts": [
+            "D"
+          ],
+          "explanation": "四轮增量为4、1、2、4，合计11。",
+          "code": "int s = 0;\nfor (int i = 1; i <= 4; i++) {\n    switch (i % 3) {\n        case 0: s += 2; break;\n        case 1: s += 3;\n        case 2: s += 1; break;\n    }\n}\nSystem.out.println(s);",
+          "options": [
+            {
+              "value": "A",
+              "text": "7"
+            },
+            {
+              "value": "B",
+              "text": "9"
+            },
+            {
+              "value": "C",
+              "text": "10"
+            },
+            {
+              "value": "D",
+              "text": "11"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q07",
+          "type": "choice",
+          "prompt": "程序输出什么？",
+          "points": 10,
+          "accepts": [
+            "B"
+          ],
+          "explanation": "case 1先让x=3，再穿透case 2乘3，得到9。",
+          "code": "int x = 1;\nswitch (1) {\n    case 1: x += 2;\n    case 2: x *= 3; break;\n    default: x = 0;\n}\nSystem.out.println(x);",
+          "options": [
+            {
+              "value": "A",
+              "text": "3"
+            },
+            {
+              "value": "B",
+              "text": "9"
+            },
+            {
+              "value": "C",
+              "text": "6"
+            },
+            {
+              "value": "D",
+              "text": "1"
+            }
+          ]
+        },
+        {
+          "id": "w5-sound-q08",
+          "type": "fill",
+          "prompt": "要求mode为1时只加2，mode为2时只加3。补一条语句，包含分号。",
+          "points": 10,
+          "accepts": [
+            "break;"
+          ],
+          "explanation": "在case 1末尾终止switch，避免继续执行case 2。",
+          "code": "switch (mode) {\n    case 1: score += 2; ____________________\n    case 2: score += 3; break;\n}",
+          "matcher": "break-statement"
+        },
+        {
+          "id": "w5-sound-q09",
+          "type": "fill",
+          "prompt": "写出最后一行的完整输出。",
+          "points": 10,
+          "accepts": [
+            "3,5,2"
+          ],
+          "explanation": "两个对象各自保存x，pool被两次构造调用各减1。",
+          "code": "class Board {\n    static int pool = 4;\n    int x;\n    Board(int x) { this.x = x; pool--; }\n}\nBoard a = new Board(3);\nBoard b = new Board(5);\nSystem.out.println(a.x + \",\" + b.x + \",\" + Board.pool);"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "sound",
+        "answerClass": "SoundBoard",
+        "title": "盐汽水的串台音响",
+        "background": "盐汽水按下1号键，音响非要顺便串到2号频道。Gay哥还把全场礼花锁成共享库存。请实现SoundBoard，保留这次有意的串台。",
+        "description": "1. 字段为private int energy=0和private static int confetti=3。tap(mode)用switch处理mode：1先加2再穿透2继续加3，2只加3，0只加1，其他整数不变。\n\n2. 每次tap结束后energy最多为9。必须实际使用switch且case 1到case 2之间不写break。\n\n3. perform()仅在energy>=4且confetti>0时消耗4点energy和1份confetti。失败时都不变，且所有对象共享confetti。\n\n4. show()输出“energy confetti”，一个半角空格、一次换行。其他方法静默，创建新对象不补礼花。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()输出“energy confetti”，一个半角空格、一次换行。其他方法静默，创建新对象不补礼花。",
+        "sampleOutput": "4 2\n1 2\n9 2",
+        "starter": "class SoundBoard {\n    private int energy = 0;\n    private static int confetti = 3;\n\n    public void tap(int mode) {\n        // 在这里补全\n    }\n    public void perform() {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        SoundBoard a = new SoundBoard();\n         SoundBoard b = new SoundBoard();\n         a.tap(1); a.tap(2); a.perform(); a.show();\n         b.tap(0); b.perform(); b.show();\n         a.tap(1); a.show();\n    }\n}",
+        "referenceSource": "class SoundBoard {\n     private int energy = 0;\n     private static int confetti = 3;\n     public void tap(int mode) {\n         switch (mode) {\n             case 1: energy += 2;\n             case 2: energy += 3; break;\n             case 0: energy += 1; break;\n             default: break;\n         }\n         if (energy > 9) energy = 9;\n     }\n     public void perform() {\n         if (energy >= 4 && confetti > 0) { energy -= 4; confetti--; }\n     }\n     public void show() { System.out.println(energy + \" \" + confetti); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        SoundBoard a = new SoundBoard();\n         SoundBoard b = new SoundBoard();\n         a.tap(1); a.tap(2); a.perform(); a.show();\n         b.tap(0); b.perform(); b.show();\n         a.tap(1); a.show();\n    }\n}",
+        "solution": "字段为private int energy=0和private static int confetti=3。tap(mode)用switch处理mode：1先加2再穿透2继续加3，2只加3，0只加1，其他整数不变。\n\n每次tap结束后energy最多为9。必须实际使用switch且case 1到case 2之间不写break。\n\nperform()仅在energy>=4且confetti>0时消耗4点energy和1份confetti。失败时都不变，且所有对象共享confetti。\n\nshow()输出“energy confetti”，一个半角空格、一次换行。其他方法静默，创建新对象不补礼花。\n\nswitch进入与穿透、break范围和多对象共享资源",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口与初态（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "switch各入口和指定穿透（12分）",
+            "scenario": "part1",
+            "points": 12
+          },
+          {
+            "name": "封顶与非法mode（6分）",
+            "scenario": "part2",
+            "points": 6
+          },
+          {
+            "name": "表演条件和失败不变（6分）",
+            "scenario": "part3",
+            "points": 6
+          },
+          {
+            "name": "共享耗尽和新对象（6分）",
+            "scenario": "part4",
+            "points": 6
+          },
+          {
+            "name": "输出与静默（4分）",
+            "scenario": "part5",
+            "points": 4
+          }
+        ]
+      }
+    },
+    {
+      "key": "planner",
+      "title": "W5专项训练 · 补给规划",
+      "subtitle": "整除与余数、三元分组、零边界和通用表达式",
+      "fillQuestions": [
+        {
+          "id": "w5-planner-q01",
+          "type": "boolean",
+          "prompt": "need=12、perBox=4时，need/perBox+1给出的4箱是最少箱数。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "恰好整除只需3箱，不能无条件加1。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q02",
+          "type": "boolean",
+          "prompt": "下面的boxes值为1。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "加法先于==，整个“商+余数==0”成为三元条件，最终返回1。",
+          "code": "int need = 17, perBox = 5;\nint boxes = need / perBox + need % perBox == 0 ? 0 : 1;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q03",
+          "type": "boolean",
+          "prompt": "int need=1,perBox=5;执行need/perBox得到0。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "两个int做整数除法，结果舍去小数部分。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q04",
+          "type": "boolean",
+          "prompt": "把11/3的计算结果强转为double，就可以得到精确的11除以3的浮点结果。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "整数除法已经截断，结果强转只能得到3.0。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q05",
+          "type": "boolean",
+          "prompt": "static int capacity字段会为每个对象各保存一份，修改一个对象看到的值不会影响其他对象。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "static字段属于类，由所有实例共享。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q06",
+          "type": "choice",
+          "prompt": "程序输出哪个数？",
+          "points": 10,
+          "accepts": [
+            "A"
+          ],
+          "explanation": "18能被6整除，余数分支加0，商为3。",
+          "code": "int n = 18, k = 6;\nint boxes = n / k + (n % k == 0 ? 0 : 1);\nSystem.out.println(boxes);",
+          "options": [
+            {
+              "value": "A",
+              "text": "3"
+            },
+            {
+              "value": "B",
+              "text": "4"
+            },
+            {
+              "value": "C",
+              "text": "1"
+            },
+            {
+              "value": "D",
+              "text": "0"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q07",
+          "type": "choice",
+          "prompt": "将2瓶盐汽水装进每箱9瓶的箱子，下式计算的是空位数。输出多少？",
+          "points": 10,
+          "accepts": [
+            "C"
+          ],
+          "explanation": "需要1箱，空位为1*9-2=7。",
+          "code": "int n = 2, k = 9;\nint empty = ((n + k - 1) / k) * k - n;\nSystem.out.println(empty);",
+          "options": [
+            {
+              "value": "A",
+              "text": "0"
+            },
+            {
+              "value": "B",
+              "text": "1"
+            },
+            {
+              "value": "C",
+              "text": "7"
+            },
+            {
+              "value": "D",
+              "text": "9"
+            }
+          ]
+        },
+        {
+          "id": "w5-planner-q08",
+          "type": "fill",
+          "prompt": "只填通用表达式，求最少箱数。范围0<=need<=1000、1<=cap<=50。只允许题中变量、整数常量、已学运算和括号，不能用方法或浮点。",
+          "points": 10,
+          "accepts": [
+            "(need + cap - 1) / cap"
+          ],
+          "explanation": "0件对应0箱；非整除要加箱，整除不多加。",
+          "code": "int boxes = ____________________;",
+          "matcher": "w5-planner"
+        },
+        {
+          "id": "w5-planner-q09",
+          "type": "fill",
+          "prompt": "count>=0、size>0。只填boolean表达式，表示装箱后最后一箱未装满且确实有余数。可用count、size、整数或boolean常量，以及已学算术、比较、逻辑和三元运算；不得调用方法。逻辑等价且符合这些限制的表达式均可得分。",
+          "points": 10,
+          "accepts": [
+            "count % size != 0"
+          ],
+          "explanation": "余数不为0表示有不满的一箱；count为0或整除时为false。count % size != 0、!(count % size == 0)和count % size == 0 ? false : true逻辑等价，均可得分。",
+          "code": "boolean hasLeft = ____________________;",
+          "matcher": "remainder"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "planner",
+        "answerClass": "BoxPlanner",
+        "title": "盐汽水和Gay哥的拼车箱",
+        "background": "Gay哥给盐汽水瓶安排拼车。瓶子装得下就不多开一箱，有空位必须算清楚，空车也别凭空出现。请实现BoxPlanner。",
+        "description": "1. private int need和private int perBox由构造方法赋值，保证0<=need<=1000、1<=perBox<=50。对象间独立。\n\n2. add(count)：count非负，且保证增加后need<=1000，只增加本对象need。\n\n3. boxes()返回足够且最少的箱数；empty()返回这些箱子的总空位数。need=0时两者均为0。表达式必须通用，禁止硬编码样例结果。\n\n4. show()输出“need boxes() empty()”，单空格、一次换行。计算方法和add不能输出或修改perBox；boxes与empty也不得修改need。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "show()输出“need boxes() empty()”，单空格、一次换行。计算方法和add不能输出或修改perBox；boxes与empty也不得修改need。",
+        "sampleOutput": "17 4 3\n20 4 0\n0 0 0\n2 1 7",
+        "starter": "class BoxPlanner {\n    private int need;\n    private int perBox;\n\n    public BoxPlanner(int need, int perBox) {\n        // 在这里补全\n    }\n    public void add(int count) {\n        // 在这里补全\n    }\n    public int boxes() {\n        // 在这里补全\n        return 0;\n    }\n    public int empty() {\n        // 在这里补全\n        return 0;\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        BoxPlanner a = new BoxPlanner(17, 5);\n         BoxPlanner b = new BoxPlanner(0, 7);\n         a.show(); a.add(3); a.show();\n         b.show();\n         BoxPlanner c = new BoxPlanner(2, 9); c.show();\n    }\n}",
+        "referenceSource": "class BoxPlanner {\n     private int need;\n     private int perBox;\n     public BoxPlanner(int need, int perBox) {\n         this.need = need; this.perBox = perBox;\n     }\n     public void add(int count) { need += count; }\n     public int boxes() { return need / perBox + (need % perBox == 0 ? 0 : 1); }\n     public int empty() { return boxes() * perBox - need; }\n     public void show() {\n         System.out.println(need + \" \" + boxes() + \" \" + empty());\n     }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        BoxPlanner a = new BoxPlanner(17, 5);\n         BoxPlanner b = new BoxPlanner(0, 7);\n         a.show(); a.add(3); a.show();\n         b.show();\n         BoxPlanner c = new BoxPlanner(2, 9); c.show();\n    }\n}",
+        "solution": "private int need和private int perBox由构造方法赋值，保证0<=need<=1000、1<=perBox<=50。对象间独立。\n\nadd(count)：count非负，且保证增加后need<=1000，只增加本对象need。\n\nboxes()返回足够且最少的箱数；empty()返回这些箱子的总空位数。need=0时两者均为0。表达式必须通用，禁止硬编码样例结果。\n\nshow()输出“need boxes() empty()”，单空格、一次换行。计算方法和add不能输出或修改perBox；boxes与empty也不得修改need。\n\n整除与余数、三元分组、零边界和通用表达式",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口与构造（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "通用箱数与三元分组（12分）",
+            "scenario": "part1",
+            "points": 12
+          },
+          {
+            "name": "零件数与整除边界（6分）",
+            "scenario": "part2",
+            "points": 6
+          },
+          {
+            "name": "空位计算（6分）",
+            "scenario": "part3",
+            "points": 6
+          },
+          {
+            "name": "add和对象独立及查询无副作用（6分）",
+            "scenario": "part4",
+            "points": 6
+          },
+          {
+            "name": "格式与静默（4分）",
+            "scenario": "part5",
+            "points": 4
+          }
+        ]
+      }
+    },
+    {
+      "key": "station",
+      "title": "W5专项训练 · 补给站",
+      "subtitle": "构造链、引用别名、短路副作用和多对象共享资源的组合",
+      "fillQuestions": [
+        {
+          "id": "w5-station-q01",
+          "type": "boolean",
+          "prompt": "以下代码结束后，b.id=1、a.id=2、Badge.next=3。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "b保留第一个对象，a指向第二个对象，类变量被两次后置自增。",
+          "code": "class Badge {\n    static int next = 1;\n    int id;\n    Badge() { id = next++; }\n}\nBadge a = new Badge();\nBadge b = a;\na = new Badge();",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q02",
+          "type": "boolean",
+          "prompt": "下面执行new Token()后created为2，因此一定创建了两个Token对象。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "两个构造方法体都增加计数，但this(2)不额外创建对象；计数逻辑不能作为对象数量依据。",
+          "code": "class Token {\n    static int created;\n    Token() { this(2); created++; }\n    Token(int n) { created++; }\n}",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q03",
+          "type": "boolean",
+          "prompt": "下面代码执行后n为2。",
+          "points": 4,
+          "accepts": [
+            "true"
+          ],
+          "explanation": "第一次比较用旧值1并令n=2，&&右侧短路；第二个||左侧已为true，也短路。",
+          "code": "int n = 1;\nboolean a = n++ > 1 && ++n > 2;\nboolean b = n == 2 || ++n > 9;",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q04",
+          "type": "boolean",
+          "prompt": "字段n=5，init仅声明局部n=0并自增。随后loop每次对字段执行++n，前两次值为1、2。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "局部初始化不修改字段，字段依次变成6、7。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q05",
+          "type": "boolean",
+          "prompt": "若stop方法只把对象字段active改成false，之前复制到局部变量snapshot的true会自动变成false。",
+          "points": 4,
+          "accepts": [
+            "false"
+          ],
+          "explanation": "boolean赋值复制值，不会建立动态绑定。",
+          "options": [
+            {
+              "value": "true",
+              "text": "正确"
+            },
+            {
+              "value": "false",
+              "text": "错误"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q06",
+          "type": "choice",
+          "prompt": "已知G的编码为71，程序输出什么？",
+          "points": 10,
+          "accepts": [
+            "B"
+          ],
+          "explanation": "G+n++先得72并令n=2，++n再变为3，最终n也是3。",
+          "code": "int n = 1;\nSystem.out.println('G' + n++ + \"-\" + (++n) + \"-\" + n);",
+          "options": [
+            {
+              "value": "A",
+              "text": "72-2-3"
+            },
+            {
+              "value": "B",
+              "text": "72-3-3"
+            },
+            {
+              "value": "C",
+              "text": "73-3-3"
+            },
+            {
+              "value": "D",
+              "text": "72-3-2"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q07",
+          "type": "choice",
+          "prompt": "程序最终输出什么？",
+          "points": 10,
+          "accepts": [
+            "C"
+          ],
+          "explanation": "条件边界随end缩小，仅执行i=1、2、3，增量4、2、4。",
+          "code": "int end = 5, s = 0;\nfor (int i = 1; i <= end; i++) {\n    end--;\n    switch (i % 2) {\n        case 0: s += 2; break;\n        case 1: s += 1;\n        default: s += 3;\n    }\n}\nSystem.out.println(s);",
+          "options": [
+            {
+              "value": "A",
+              "text": "6"
+            },
+            {
+              "value": "B",
+              "text": "8"
+            },
+            {
+              "value": "C",
+              "text": "10"
+            },
+            {
+              "value": "D",
+              "text": "14"
+            }
+          ]
+        },
+        {
+          "id": "w5-station-q08",
+          "type": "fill",
+          "prompt": "调用first(11)返回多少？只填整数。",
+          "points": 10,
+          "accepts": [
+            "6"
+          ],
+          "explanation": "第5轮累加后sum=15，第6轮开头检查成立，返回6。",
+          "code": "static int first(int n) {\n    int sum = 0;\n    for (int i = 1; i <= n; i++) {\n        if (sum >= n) return i;\n        sum += i;\n    }\n    return -1;\n}"
+        },
+        {
+          "id": "w5-station-q09",
+          "type": "fill",
+          "prompt": "a、b为boolean，只在恰好一人为true时通过。只能使用a、b、&&、||、!和括号，写一个通用表达式。",
+          "points": 10,
+          "accepts": [
+            "(a || b) && !(a && b)"
+          ],
+          "explanation": "四种组合均须正确，(a&&!b)||(!a&&b)等价。",
+          "code": "boolean pass = ____________________;",
+          "matcher": "exclusive"
+        }
+      ],
+      "codeTask": {
+        "kind": "java",
+        "grader": "w5-v1",
+        "variant": "station",
+        "answerClass": "CheerStation",
+        "title": "盐汽水和Gay哥的双人应援站",
+        "background": "盐汽水和Gay哥各有自己的体力，却共用最后4张应援券。喊到没力气或没券必须闭麦，新建分身也不能刷券。实现CheerStation。",
+        "description": "1. 字段为private int energy、private boolean on=false、private static int tickets=4。无参构造用this(3)；有参energy保证0到8。构造不改tickets。\n\n2. start()：只有energy>0且tickets>0才设on=true，否则设false。stop()设on=false，不改变体力或券数。\n\n3. chant(rounds)：rounds在0到20。每轮仅在on、energy>0、tickets>0同时满足时消耗1体力和1券；条件不满足时设on=false且不消耗。成功消耗后若任一资源为0，也立即设on=false。\n\n4. rest(gain)：gain在0到20，恢复体力且最多为8，不改券数，也不自动开启on。show()输出“energy on tickets”，单空格、一次换行。其余方法静默。",
+        "input": "无标准输入。系统使用给定Main及额外调用检查对象真实状态。只需补全上方作答类，不修改固定Main。",
+        "output": "rest(gain)：gain在0到20，恢复体力且最多为8，不改券数，也不自动开启on。show()输出“energy on tickets”，单空格、一次换行。其余方法静默。",
+        "sampleOutput": "1 true 2\n3 false 0\n1 false 0\n2 false 0",
+        "starter": "class CheerStation {\n    private int energy;\n    private boolean on = false;\n    private static int tickets = 4;\n\n    public CheerStation() {\n        // 在这里补全\n    }\n    public CheerStation(int energy) {\n        // 在这里补全\n    }\n    public void start() {\n        // 在这里补全\n    }\n    public void stop() {\n        // 在这里补全\n    }\n    public void chant(int rounds) {\n        // 在这里补全\n    }\n    public void rest(int gain) {\n        // 在这里补全\n    }\n    public void show() {\n        // 在这里补全\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerStation a = new CheerStation();\n         CheerStation b = new CheerStation(5);\n         a.start(); a.chant(2); a.show();\n         b.start(); b.chant(3); b.show();\n         a.chant(1); a.show();\n         CheerStation c = new CheerStation(2); c.show();\n    }\n}",
+        "referenceSource": "class CheerStation {\n     private int energy;\n     private boolean on = false;\n     private static int tickets = 4;\n     public CheerStation() { this(3); }\n     public CheerStation(int energy) { this.energy = energy; }\n     public void start() { on = energy > 0 && tickets > 0; }\n     public void stop() { on = false; }\n     public void chant(int rounds) {\n         for (int i = 1; i <= rounds; i++) {\n             if (on && energy > 0 && tickets > 0) {\n                 energy--; tickets--;\n                 if (energy == 0 || tickets == 0) on = false;\n             } else { on = false; }\n         }\n     }\n     public void rest(int gain) {\n         energy += gain;\n         if (energy > 8) energy = 8;\n     }\n     public void show() { System.out.println(energy + \" \" + on + \" \" + tickets); }\n }\n\npublic class Main {\n    public static void main(String[] args) {\n        CheerStation a = new CheerStation();\n         CheerStation b = new CheerStation(5);\n         a.start(); a.chant(2); a.show();\n         b.start(); b.chant(3); b.show();\n         a.chant(1); a.show();\n         CheerStation c = new CheerStation(2); c.show();\n    }\n}",
+        "solution": "字段为private int energy、private boolean on=false、private static int tickets=4。无参构造用this(3)；有参energy保证0到8。构造不改tickets。\n\nstart()：只有energy>0且tickets>0才设on=true，否则设false。stop()设on=false，不改变体力或券数。\n\nchant(rounds)：rounds在0到20。每轮仅在on、energy>0、tickets>0同时满足时消耗1体力和1券；条件不满足时设on=false且不消耗。成功消耗后若任一资源为0，也立即设on=false。\n\nrest(gain)：gain在0到20，恢复体力且最多为8，不改券数，也不自动开启on。show()输出“energy on tickets”，单空格、一次换行。其余方法静默。\n\n构造链、引用别名、短路副作用和多对象共享资源的组合",
+        "hint": "接口均为public；仅处理题面声明的合法参数。各评分项会检查独立对象、边界条件和多次调用，不能只输出样例。",
+        "compare": "exact",
+        "tests": [
+          {
+            "name": "字段接口与构造链（6分）",
+            "scenario": "part0",
+            "points": 6
+          },
+          {
+            "name": "共享券与对象独立（8分）",
+            "scenario": "part1",
+            "points": 8
+          },
+          {
+            "name": "启动停止及恢复不自动启动（6分）",
+            "scenario": "part2",
+            "points": 6
+          },
+          {
+            "name": "逐轮合法消耗与耗尽即停（12分）",
+            "scenario": "part3",
+            "points": 12
+          },
+          {
+            "name": "体力上限和零轮（4分）",
+            "scenario": "part4",
+            "points": 4
+          },
+          {
+            "name": "格式与静默（4分）",
+            "scenario": "part5",
+            "points": 4
+          }
+        ]
+      }
+    }
+  ]
+}

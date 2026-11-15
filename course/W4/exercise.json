@@ -1,0 +1,492 @@
+{
+  "title": "W4国庆练习",
+  "subtitle": "Java与FTC基础综合练习 · 仅一次正式提交",
+  "estimate": "建议20分钟",
+  "content": "",
+  "exerciseOnly": true,
+  "submissionLimit": 1,
+  "scoring": {
+    "knowledgeWeight": 60,
+    "programmingWeight": 40
+  },
+  "fillQuestions": [
+    {
+      "id": "w4-q01",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "执行 Battery b = new Battery(7); 后，b.energy 的值为10。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "构造方法中的参数 energy 遮蔽了同名实例字段。energy += 3 修改的是参数，字段仍为5。",
+      "code": "class Battery {\n    int energy = 5;\n    Battery(int energy) {\n        energy += 3;\n    }\n}",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q02",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "依次执行以下代码后，a.coins 和 b.coins 的值相同。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "b = a 使两个变量暂时引用同一个对象；a = new Box() 使 a 改为引用新对象。最终 a.coins 为默认值0，b.coins 为8。",
+      "code": "class Box {\n    int coins;\n}\n// 以下语句位于 main 方法中\nBox a = new Box();\na.coins = 3;\nBox b = a;\na = new Box();\nb.coins = 8;",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q03",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "一个无参构造方法通过 this(6) 调用了同类的有参构造方法。执行一次对应的 new 表达式时，虽然两个构造方法的方法体都会执行，但只创建一个对象。假设两个构造方法内部均没有其他创建对象的操作。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "this(6) 在当前对象的构造过程中调用另一个构造方法，不会额外创建对象。执行两个构造方法的方法体，不等于创建两个对象。",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q04",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "在没有执行其他操作的情况下，依次创建两个 Shop 对象。第二个对象创建完成后，Shop.stock 的值为4。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "stock 是共享类变量，不会每次创建对象时重新初始化。两个构造方法依次将其减为4、3，最终为3。",
+      "code": "class Shop {\n    static int stock = 5;\n    Shop() {\n        stock--;\n    }\n}",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q05",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "将 double rate = 9 / 4; 修改为以下代码后，rate 的值为2.25。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "先进行整数除法，9 / 4 得到2；再转换为 double 得到2.0。应在除法之前转换操作数，例如 (double) 9 / 4。",
+      "code": "double rate = (double) (9 / 4);",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q06",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "以下代码执行完毕后，ticket 的值仍然为0。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "第一个表达式的 && 左侧为假，第二个表达式的 || 左侧为真，两处 ++ticket 都因短路而未执行。first 为 false，second 为 true。",
+      "code": "int ticket = 0;\nboolean first = ticket > 0 && ++ticket > 1;\nboolean second = ticket == 0 || ++ticket > 1;",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q07",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "以下循环的循环体总共执行5次。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "每轮 i 增加、end 减少。第5轮开始时 i = end = 5，仍会执行；之后 end = 4、i = 6，循环终止。",
+      "code": "int end = 9;\nint count = 0;\nfor (int i = 1; i <= end; i++) {\n    end--;\n    count++;\n}",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q08",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "一个有效的 FTC OpMode 使用以下注解，且没有添加 @Disabled。这是一个手动程序。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "程序类型由 @Autonomous 注解决定，因此这是自动程序。name = \"TeleOp\" 只设置显示名称，不改变程序类型。",
+      "code": "@Autonomous(name = \"TeleOp\")",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q09",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "在继承 LinearOpMode 的具体类中，将原来的无参 runOpMode() 替换为以下方法。保留 @Override 后，SDK 会自动给 round 传入当前轮数，因此程序仍可正常使用。",
+      "accepts": [
+        "false"
+      ],
+      "explanation": "runOpMode(int round) 与无参 runOpMode() 参数列表不同，不能完成要求的方法重写。@Override 会使编译器检查并报告错误，不会自动提供参数。",
+      "code": "@Override\npublic void runOpMode(int round) {\n    waitForStart();\n}",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q10",
+      "type": "boolean",
+      "points": 2,
+      "prompt": "正常初始化并等待开始时，即使尚未按下 START，第一处 telemetry.update() 也可能已经执行。",
+      "accepts": [
+        "true"
+      ],
+      "explanation": "程序按顺序执行，到达 waitForStart() 时才等待开始。因此之前的遥测添加与刷新可以在 START 前执行。",
+      "code": "@Override\npublic void runOpMode() {\n    telemetry.addLine(\"我已经醒了\");\n    telemetry.update();\n    waitForStart();\n    telemetry.addLine(\"现在开工\");\n    telemetry.update();\n}",
+      "options": [
+        {
+          "value": "true",
+          "text": "正确"
+        },
+        {
+          "value": "false",
+          "text": "错误"
+        }
+      ]
+    },
+    {
+      "id": "w4-q11",
+      "type": "choice",
+      "points": 4,
+      "prompt": "执行以下代码，输出结果为（　）。",
+      "accepts": [
+        "B"
+      ],
+      "explanation": "创建 a 时先执行 this(6)：coins 设为6，fee 从1增为2；再执行 coins -= fee，a.coins 变为4。创建 b 时 coins 设为8，fee 增为3。输出4,8,3。",
+      "code": "class Vault {\n    static int fee = 1;\n    int coins;\n    Vault() {\n        this(6);\n        coins -= fee;\n    }\n    Vault(int coins) {\n        this.coins = coins;\n        fee++;\n    }\n}\n// 以下语句位于 main 方法中\nVault a = new Vault();\nVault b = new Vault(8);\nSystem.out.println(a.coins + \",\" + b.coins + \",\" + Vault.fee);",
+      "options": [
+        {
+          "value": "A",
+          "text": "5,8,3"
+        },
+        {
+          "value": "B",
+          "text": "4,8,3"
+        },
+        {
+          "value": "C",
+          "text": "3,8,3"
+        },
+        {
+          "value": "D",
+          "text": "4,6,2"
+        }
+      ]
+    },
+    {
+      "id": "w4-q12",
+      "type": "choice",
+      "points": 4,
+      "prompt": "执行以下代码，输出结果为（　）。",
+      "accepts": [
+        "C"
+      ],
+      "explanation": "case 1 后没有 break，会继续执行 case 2。i 为1、2、3、4时分别加3、2、4、3，累计为12。",
+      "code": "int score = 0;\nfor (int i = 1; i <= 4; i++) {\n    switch (i % 3) {\n        case 0:\n            score += 4;\n            break;\n        case 1:\n            score += 1;\n        case 2:\n            score += 2;\n            break;\n    }\n}\nSystem.out.println(score);",
+      "options": [
+        {
+          "value": "A",
+          "text": "9"
+        },
+        {
+          "value": "B",
+          "text": "10"
+        },
+        {
+          "value": "C",
+          "text": "12"
+        },
+        {
+          "value": "D",
+          "text": "14"
+        }
+      ]
+    },
+    {
+      "id": "w4-q13",
+      "type": "choice",
+      "points": 4,
+      "prompt": "执行以下代码，输出结果为（　）。",
+      "accepts": [
+        "A"
+      ],
+      "explanation": "x++ > 2 使用旧值2比较，条件为假，但 x 已变为3。只执行 x + 3，y 得到6。输出时 x++ 提供3，++y 提供7，所以输出3,7。",
+      "code": "int x = 2;\nint y = x++ > 2 ? ++x : x + 3;\nSystem.out.println(x++ + \",\" + ++y);",
+      "options": [
+        {
+          "value": "A",
+          "text": "3,7"
+        },
+        {
+          "value": "B",
+          "text": "4,7"
+        },
+        {
+          "value": "C",
+          "text": "4,5"
+        },
+        {
+          "value": "D",
+          "text": "3,6"
+        }
+      ]
+    },
+    {
+      "id": "w4-q14",
+      "type": "choice",
+      "points": 4,
+      "prompt": "以下代码位于迭代式 OpMode 类中。SDK 调用一次 init()，随后调用三次 loop()。三次 addData() 的第二个参数依次为（　）。",
+      "accepts": [
+        "D"
+      ],
+      "explanation": "init() 声明并修改的是局部变量 count，不影响实例字段。loop() 使用初始为10的实例字段，三次前置自增后依次为11、12、13。",
+      "code": "int count = 10;\n@Override\npublic void init() {\n    int count = 0;\n    count++;\n}\n@Override\npublic void loop() {\n    telemetry.addData(\"轮次\", ++count);\n    telemetry.update();\n}",
+      "options": [
+        {
+          "value": "A",
+          "text": "1、2、3"
+        },
+        {
+          "value": "B",
+          "text": "11、11、11"
+        },
+        {
+          "value": "C",
+          "text": "2、3、4"
+        },
+        {
+          "value": "D",
+          "text": "11、12、13"
+        }
+      ]
+    },
+    {
+      "id": "w4-q15",
+      "type": "choice",
+      "points": 4,
+      "prompt": "假设给 running 赋值时 opModeIsActive() 返回 true。仅分析代码本身的循环条件，下列说法正确的是（　）。",
+      "accepts": [
+        "B"
+      ],
+      "explanation": "赋值时只调用了一次 opModeIsActive()，随后 while 反复读取保存的布尔值。若要每次判断时重新检查状态，应写 while (opModeIsActive())。",
+      "code": "waitForStart();\nboolean running = opModeIsActive();\nwhile (running) {\n    telemetry.addLine(\"正在运行\");\n    telemetry.update();\n}",
+      "options": [
+        {
+          "value": "A",
+          "text": "SDK 的运行状态改变时，running 会自动同步改变"
+        },
+        {
+          "value": "B",
+          "text": "循环条件只读取已保存的布尔值，没有重新检查 OpMode 状态"
+        },
+        {
+          "value": "C",
+          "text": "每次调用 telemetry.update()，都会重新给 running 赋值"
+        },
+        {
+          "value": "D",
+          "text": "running 未在循环体中修改，因此这段代码无法编译"
+        }
+      ]
+    },
+    {
+      "id": "w4-q16",
+      "type": "fill",
+      "points": 4,
+      "prompt": "装走 need 个零件，每箱最多装 perBox 个。补全足够且最少的箱数表达式。不得使用浮点数、调用方法或直接填写本组结果；表达式须适用于 1 ≤ need ≤ 1000、1 ≤ perBox ≤ 100 的所有情况。只填写表达式，不加分号。",
+      "accepts": [
+        "(need + perBox - 1) / perBox"
+      ],
+      "explanation": "整数除法会舍去小数部分，装箱需要向上取整。恰好装满不多算一箱，有余数则增加一箱。本组结果为4。其他符合限制且在全部数据范围内等价的表达式也可得分。 也可按是否整除分别计算：need % perBox == 0 ? need / perBox : need / perBox + 1；整除时不加箱，否则增加1箱。",
+      "code": "int need = 17;\nint perBox = 5;\nint boxes = ____________________;",
+      "matcher": "boxes"
+    },
+    {
+      "id": "w4-q17",
+      "type": "fill",
+      "points": 4,
+      "prompt": "已知字符 B 的编码值为66。写出以下代码的完整输出。",
+      "accepts": [
+        "68-5-B"
+      ],
+      "explanation": "先计算字符数值：B 的编码66加2为68；遇到字符串后开始拼接。括号中2 + 3为5；最后的字符 B 直接拼接为字母。",
+      "code": "System.out.println('B' + 2 + \"-\" + (2 + 3) + \"-\" + 'B');"
+    },
+    {
+      "id": "w4-q18",
+      "type": "fill",
+      "points": 4,
+      "prompt": "调用 find(6) 的返回值为多少？",
+      "accepts": [
+        "4"
+      ],
+      "explanation": "判断在累加之前。前三轮判断时 sum 为0、1、3，累加后依次为1、3、6；第4轮开头 sum >= 6 成立，返回4。",
+      "code": "static int find(int n) {\n    int sum = 0;\n    for (int i = 1; i <= n; i++) {\n        if (sum >= n) {\n            return i;\n        }\n        sum += i;\n    }\n    return -1;\n}"
+    },
+    {
+      "id": "w4-q19",
+      "type": "fill",
+      "points": 4,
+      "prompt": "a、b 均为已经声明并赋值的 boolean 变量，分别表示两名审核员是否同意：true 表示同意，false 表示不同意。请补全表达式，使结果变量 pass 在恰好一人同意时为 true（通过），在两人都同意或都不同意时为 false（不通过）。只能使用 a、b、&&、||、! 和括号；只填表达式，不加分号。",
+      "accepts": [
+        "(a && !b) || (!a && b)"
+      ],
+      "explanation": "a、b 和 pass 都是 boolean 类型；true 表示同意或通过，false 表示不同意或不通过。仅有一人同意的两种情况是 a && !b 和 !a && b，用 || 连接。也可写 (a || b) && !(a && b)。直接写 a || b 会使两人都同意时也通过；Java 的布尔字面量必须小写，但本题限定只能使用所列变量和运算符。",
+      "code": "boolean pass = ____________________;",
+      "matcher": "exclusive"
+    },
+    {
+      "id": "w4-q20",
+      "type": "fill",
+      "points": 4,
+      "prompt": "假设循环完整执行三次，每次检查 opModeIsActive() 都返回 true。第3次调用 addData() 时，作为第二个参数传入的数值为多少？",
+      "accepts": [
+        "5"
+      ],
+      "explanation": "shown++ 先提供旧值，再自增，之后再执行 shown += i。三轮传入值依次为0、2、5，各轮结束值为2、5、9。第3次传入5，不是最终值9。",
+      "code": "int shown = 0;\nwaitForStart();\nfor (int i = 1; i <= 3 && opModeIsActive(); i++) {\n    telemetry.addData(\"计数\", shown++);\n    shown += i;\n    telemetry.update();\n}"
+    }
+  ],
+  "codeTask": {
+    "kind": "java",
+    "grader": "soda-v1",
+    "title": "别让 host 变成白开水（40分）",
+    "background": "host是一瓶体质虚弱的盐汽水，挨打就漏气。他和室友仅剩2瓶药，必须省着用：满血不能浪费，倒下不能复活，两人还不能各算各的库存。请补全 Soda 类，管理他们的生命和共享药水。",
+    "description": "每个 Soda 对象代表一瓶盐汽水，拥有独立生命 hp；所有对象共享 potions，初始2瓶。\n\n- **Soda(int hp)**：用参数设置当前对象的初始生命，参数保证在0至10之间；创建对象不能重置药水。\n- **void hurt(int damage)**：扣除非负整数伤害，生命最低为0，不消耗药水。\n- **void heal()**：仅当生命大于0、小于10且有药时，耗1瓶恢复3点生命，最多为10。其余情况生命、药水都不变。\n- **void show()**：输出当前对象生命和共享余药，单个空格分隔，输出后换行。\n\n只补全四个方法体，不得修改字段、方法签名或 Main 类。除 show 外的方法不得输出。 主程序 Main 在页面中只读显示，提交和运行时由系统拼接；服务端也会校验主程序未被修改，篡改请求会被拒绝且不计入提交次数。",
+    "input": "不需要键盘输入。评分会更换合法参数、创建对象的时机和方法调用顺序，并直接检查对象状态。",
+    "output": "show 每次输出一行：生命值 余药数量，两个整数以一个空格分隔。",
+    "sampleOutput": "0 2\n10 1\n9 0\n7 0\n0 0",
+    "starter": "class Soda {\n    private int hp;\n    private static int potions = 2;\n\n    public Soda(int hp) {\n        // 补全构造方法\n    }\n    public void hurt(int damage) {\n        // 补全扣血逻辑\n    }\n    public void heal() {\n        // 补全治疗逻辑\n    }\n    public void show() {\n        // 补全输出逻辑\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Soda host = new Soda(10);\n        Soda roommate = new Soda(8);\n\n        host.heal();\n        host.hurt(12);\n        host.heal();\n        host.show();\n\n        roommate.heal();\n        roommate.show();\n\n        roommate.hurt(4);\n        roommate.heal();\n        roommate.show();\n\n        roommate.hurt(2);\n        roommate.heal();\n        roommate.show();\n\n        host.show();\n    }\n}",
+    "compare": "exact",
+    "tests": [
+      {
+        "name": "固定结构与接口（6分）",
+        "scenario": "structure",
+        "points": 6,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "构造与独立状态（4分）",
+        "scenario": "constructor",
+        "points": 4,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "扣血与下限（8分）",
+        "scenario": "hurt",
+        "points": 8,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "治疗条件与无效操作（6分）",
+        "scenario": "eligibility",
+        "points": 6,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "恢复量与上限（6分）",
+        "scenario": "recovery",
+        "points": 6,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "共享药水与耗尽（6分）",
+        "scenario": "shared",
+        "points": 6,
+        "input": "",
+        "expected": ""
+      },
+      {
+        "name": "输出格式及方法静默（4分）",
+        "scenario": "output",
+        "points": 4,
+        "input": "",
+        "expected": ""
+      }
+    ],
+    "hint": "**评分标准（共40分）**\n\n- 固定代码结构和方法接口：6分。只允许修改指定方法体；主程序锁定，修改会被拒绝。注释和排版差异不扣分。\n- 构造与独立状态：4分。检查不同初始生命、多个对象互不覆盖以及新建对象不重置药水。\n- 扣血与生命下限：8分。检查零伤害、普通伤害、恰好归零和超量伤害。\n- 治疗条件与无效操作：6分。满血、死亡或无药时不能改变状态。\n- 恢复量与生命上限：6分。有效治疗增加3点，最多为10，且每次只消耗1瓶。\n- 共享药水与耗尽：6分。不同对象共享库存，药水用尽后治疗无效。\n- 输出与静默要求：4分。show 按格式报告真实状态，其他方法不输出。\n\n每项独立评分，不只比较样例输出；编译失败则编程题为0分。",
+    "solution": "构造方法使用 this.hp 区分字段与同名参数。hp 为实例字段，每个对象各有一份；potions 为 static，所有对象共享，不能在构造时重置。hurt 扣血后将负数归零。heal 先同时检查存活、未满血、有药三个条件，再扣药、回血和限制上限；无效治疗不改变任何状态。show 输出当时的字段值。",
+    "referenceSource": "class Soda {\n    private int hp;\n    private static int potions = 2;\n\n    public Soda(int hp) {\n        this.hp = hp;\n    }\n    public void hurt(int damage) {\n        hp -= damage;\n        if (hp < 0) hp = 0;\n    }\n    public void heal() {\n        if (hp > 0 && hp < 10 && potions > 0) {\n            potions--;\n            hp += 3;\n            if (hp > 10) hp = 10;\n        }\n    }\n    public void show() {\n        System.out.println(hp + \" \" + potions);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Soda host = new Soda(10);\n        Soda roommate = new Soda(8);\n\n        host.heal();\n        host.hurt(12);\n        host.heal();\n        host.show();\n\n        roommate.heal();\n        roommate.show();\n\n        roommate.hurt(4);\n        roommate.heal();\n        roommate.show();\n\n        roommate.hurt(2);\n        roommate.heal();\n        roommate.show();\n\n        host.show();\n    }\n}"
+  },
+  "acScoring": "first-score"
+}

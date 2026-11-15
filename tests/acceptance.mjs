@@ -1,0 +1,75 @@
+import {seedTestAccounts} from './fixtures.mjs';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,readFile} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
+const root=resolve(import.meta.dirname,'..'),data=await mkdtemp(join(root,'data','test-'));
+await seedTestAccounts(data);
+const port=5174,base='http://127.0.0.1:'+port;let child;
+async function start(){child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,PORT:String(port),FP_DATA_DIR:data},windowsHide:true,stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);for(let i=0;i<70;i++){await delay(150);if(child.exitCode!==null)throw Error(output);if(output.includes('FabulousProgram ·'))return;}throw Error('Server startup timed out '+output);}
+async function stop(){if(!child||child.exitCode!==null)return;await new Promise(resolve=>{child.once('exit',resolve);child.kill();});}
+async function call(path,token,body,method=body?'POST':'GET',expected=200){const response=await fetch(base+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const result=await response.json();assert.equal(response.status,expected,JSON.stringify(result));return result;}
+try{
+ await start();
+ const admin=await call('/api/auth/login',null,{username:'admin',password:'admin123'});
+ const a=await call('/api/auth/login',null,{username:'member',password:'member123'});
+ await call('/api/admin/users',admin.token,{username:'member_b',password:'testpass123',displayName:'隔离测试成员',role:'member'},'POST',201);
+ const b=await call('/api/auth/login',null,{username:'member_b',password:'testpass123'});
+ assert.notEqual(a.token,b.token);
+ await call('/api/admin/users',b.token,undefined,'GET',403);
+ await call('/api/progress/no-such-lesson',a.token,{},'POST',404);
+ const publicLesson=await call('/api/lessons/w1-03',a.token);assert.equal(publicLesson.lesson.fillQuestions[0].accepts,undefined);assert.equal(publicLesson.lesson.codeTask.tests[0].scenario,undefined);
+ const rules=await call('/api/lessons/w1-01',a.token);for(const question of rules.lesson.fillQuestions){assert.equal(question.accepts,undefined);assert.equal(question.options.length,4);}
+ await call('/api/drafts/w1-02',a.token,{source:'A private draft',answers:{main:'secret A'}},'PUT');
+ const bDraft=await call('/api/lessons/w1-02',b.token);assert.notEqual(bDraft.draft.source,'A private draft');assert.deepEqual(bDraft.draft.answers,{});
+ assert.notEqual((await call('/api/lessons/w1-03',a.token)).draft.source,'A private draft');
+ await call('/api/progress/w1-02',a.token,{});
+ const fills=await call('/api/submit/fill',a.token,{lessonId:'w1-02',answers:{class:'class',main:'main',file:'Hello.java',return:'void'}});assert.equal(fills.status,'AC');
+ const source='public class Main { public static void main(String[] args) {System.out.println("Hello, FTC 19726!");System.out.println("Ready for BIOBUZZ.");}}';
+ const emptyRun=await call('/api/run',a.token,{lessonId:'w1-02',source:bDraft.lesson.codeTask.starter});assert.equal(emptyRun.status,'RUN');assert.equal(emptyRun.score,undefined);assert.equal(emptyRun.output,'');assert.equal(emptyRun.preview,true);assert.equal(emptyRun.cases,undefined);
+ const goodRun=await call('/api/run',a.token,{lessonId:'w1-02',source});assert.equal(goodRun.status,'RUN');assert.equal(goodRun.preview,true);assert.equal(goodRun.output,'Hello, FTC 19726!\nReady for BIOBUZZ.\n');
+ assert.equal((await call('/api/bootstrap',a.token)).stats.accepted,0);
+ assert.equal((await call('/api/submissions',a.token)).submissions.length,1,'Trial runs must not create submission records');
+ const ac=await call('/api/submit/code',a.token,{lessonId:'w1-02',source});assert.equal(ac.status,'AC');
+ assert.equal((await call('/api/bootstrap',a.token)).stats.accepted,1);
+ assert.equal((await call('/api/bootstrap',b.token)).stats.accepted,0);
+ assert.equal((await call('/api/submissions?scope=all',b.token)).submissions.length,0);
+ assert.equal((await call('/api/submissions',admin.token)).submissions.length,0);
+ assert.equal((await call('/api/submissions?scope=all',admin.token)).submissions.length,2);
+ const week1=(await call('/api/bootstrap',admin.token)).weeks.find(w=>w.id==='week-1');await call('/api/admin/weeks',admin.token,{...week1,published:false});
+ await call('/api/lessons/w1-04',a.token,undefined,'GET',404);
+ await call('/api/submit/code',a.token,{lessonId:'w1-04',source},'POST',404);
+ await call('/api/admin/weeks',admin.token,{...week1,published:true});
+ const again=await call('/api/auth/login',null,{username:'member',password:'member123'});
+ await call('/api/auth/logout',a.token,{});
+ await call('/api/bootstrap',a.token,undefined,'GET',401);
+ assert.equal((await call('/api/bootstrap',again.token)).user.username,'member');
+ assert.equal((await call('/api/bootstrap',b.token)).user.username,'member_b');
+ const slow=call('/api/submit/code',again.token,{lessonId:'w1-02',source:'public class Hello {public static void main(String[] args) throws Exception {Thread.sleep(800);}}'},'POST',401);
+ await delay(60);await call('/api/auth/logout',again.token,{});await slow;
+ const persisted=await call('/api/auth/login',null,{username:'member',password:'member123'});
+ await stop();await start();
+ assert.equal((await call('/api/bootstrap',persisted.token)).stats.accepted,1);
+ assert.equal((await call('/api/lessons/w1-02',persisted.token)).draft.source,'A private draft');
+ assert.equal((await call('/api/bootstrap',b.token)).stats.submissions,0);
+ await call('/api/auth/register',null,{username:'bad',displayName:'短密码',password:'123'},'POST',400);
+ const signup=await call('/api/auth/register',null,{username:'new_member',displayName:'自助注册',password:'SamplePass!8397',role:'admin'},'POST',201);
+ assert.equal(signup.user.role,'member');assert.equal(signup.user.passwordHash,undefined);
+ await call('/api/auth/register',null,{username:'NEW_MEMBER',displayName:'重复',password:'SamplePass!8397'},'POST',409);
+ const newcomer=await call('/api/auth/login',null,{username:'new_member',password:'SamplePass!8397'});
+ await call('/api/admin/activity',newcomer.token,undefined,'GET',403);
+ assert.equal((await call('/api/bootstrap',newcomer.token)).stats.submissions,0);
+ const activity=await call('/api/admin/activity',admin.token);
+ assert.equal(activity.enabled,3);assert.equal(activity.active7,3);assert.equal(activity.rate,100);
+ assert.ok(activity.members.every(m=>m.user.role==='member'&&!m.user.passwordHash));
+ await call('/api/admin/users/'+signup.user.id,admin.token,{active:false},'PATCH');
+ assert.equal((await call('/api/admin/activity',admin.token)).enabled,2);
+ await stop();await start();
+ await call('/api/auth/login',null,{username:'new_member',password:'SamplePass!8397'},'POST',401);
+ assert.equal((await call('/api/admin/activity',admin.token)).members.length,3);
+ console.log('PASS: public registration, forced member role, duplicate prevention, activity metrics, disabled exclusion and persistence');
+ const stored=JSON.parse(await readFile(join(data,'store.json'),'utf8'));assert.ok(stored.sessions.every(s=>s.hash&&!s.token));
+ console.log('PASS: two-account isolation, independent sessions, private drafts, private answers/tests, role enforcement, real AC, progress, publish/unpublish, logout, restart persistence.');
+ console.log('Isolated test data: '+data);
+}finally{await stop();}
